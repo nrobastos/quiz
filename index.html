@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voxer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0c0c0f;
+  --surface:#141418;
+  --border:#262630;
+  --text:#e8e6e0;
+  --muted:#5a5870;
+  --accent:#f0b429;
+  --accent2:#3d9eff;
+  --red:#f05a5a;
+  --green:#3dbd7a;
+}
+
+body{
+  font-family:'Fira Code',monospace;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Animated grid background */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(240,180,41,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(240,180,41,0.04) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+}
+
+body::after{
+  content:'';
+  position:fixed;
+  top:-40%;left:-20%;
+  width:60%;height:80%;
+  background:radial-gradient(ellipse,rgba(61,158,255,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.logo{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:2.8rem;
+  letter-spacing:-0.03em;
+  color:var(--text);
+  margin-bottom:0.2rem;
+  position:relative;
+  z-index:1;
+}
+
+.logo .x{color:var(--accent);}
+
+.tagline{
+  font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  margin-bottom:2.5rem;
+  position:relative;
+  z-index:1;
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:2.25rem;
+  width:100%;
+  max-width:400px;
+  position:relative;
+  z-index:1;
+  animation:up .35s ease both;
+}
+
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.tabs{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  margin-bottom:2rem;
+  gap:0;
+}
+
+.tab{
+  flex:1;padding:.65rem;
+  background:none;border:none;
+  font-family:'Fira Code',monospace;
+  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:all .2s;
+}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.fg{margin-bottom:1.1rem;}
+
+label{
+  display:block;font-size:.62rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.35rem;
+}
+
+input{
+  width:100%;padding:.7rem .9rem;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:3px;color:var(--text);
+  font-family:'Fira Code',monospace;font-size:.85rem;
+  outline:none;transition:border-color .2s;
+}
+input:focus{border-color:rgba(240,180,41,.5);}
+
+.role-pick{display:flex;gap:.6rem;margin-bottom:1.1rem;}
+.role-opt{
+  flex:1;padding:.8rem .5rem;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:3px;cursor:pointer;text-align:center;
+  font-family:'Fira Code',monospace;font-size:.68rem;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);transition:all .2s;
+}
+.role-opt .icon{display:block;font-size:1.3rem;margin-bottom:.3rem;}
+.role-opt.active{border-color:var(--accent);color:var(--accent);background:rgba(240,180,41,.07);}
+
+.btn{
+  width:100%;padding:.85rem;
+  background:var(--accent);color:var(--bg);
+  border:none;border-radius:3px;
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;margin-top:.25rem;
+}
+.btn:hover{filter:brightness(1.08);}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none;}
+
+.err{
+  color:var(--red);font-size:.72rem;
+  text-align:center;margin-top:.65rem;min-height:1em;
+}
+
+.panel{display:none;}
+.panel.on{display:block;}
+</style>
+</head>
+<body>
+
+<div class="logo">Vo<span class="x">x</span>er</div>
+<p class="tagline">Questionários ao vivo</p>
+
+<div class="card">
+  <div class="tabs">
+    <button class="tab active" onclick="tab('login')">Entrar</button>
+    <button class="tab"        onclick="tab('reg')">Registar</button>
+  </div>
+
+  <div id="p-login" class="panel on">
+    <div class="fg"><label>Email</label><input id="l-email" type="email" placeholder="tu@email.com"></div>
+    <div class="fg"><label>Palavra-passe</label><input id="l-pass" type="password" placeholder="••••••••"></div>
+    <button class="btn" onclick="login()">Entrar</button>
+    <p class="err" id="l-err"></p>
+  </div>
+
+  <div id="p-reg" class="panel">
+    <div class="fg"><label>Nome</label><input id="r-name" type="text" placeholder="O teu nome"></div>
+    <div class="fg"><label>Email</label><input id="r-email" type="email" placeholder="tu@email.com"></div>
+    <div class="fg"><label>Palavra-passe</label><input id="r-pass" type="password" placeholder="mínimo 6 caracteres"></div>
+    <div class="fg">
+      <label>Papel</label>
+      <div class="role-pick">
+        <div class="role-opt active" id="ro-presenter" onclick="role('presenter')">
+          <span class="icon">🎙️</span>Apresentador
+        </div>
+        <div class="role-opt" id="ro-audience" onclick="role('audience')">
+          <span class="icon">👥</span>Audiência
+        </div>
+      </div>
+    </div>
+    <button class="btn" onclick="register()">Criar conta</button>
+    <p class="err" id="r-err"></p>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// ⚠️  SUBSTITUI PELOS TEUS VALORES (Project Settings → API)
+const SUPABASE_URL = 'https://afdesdgltdsfwkburmuc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZGVzZGdsdGRzZndrYnVybXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzcwMTgsImV4cCI6MjA4OTAxMzAxOH0.bdyHF7EODlXW0GyKLdeKLzsmIGNGGc3qC13ogM5amEY';
+
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Redireciona se já autenticado
+sb.auth.getSession().then(async ({data:{session}})=>{
+  if(!session) return;
+  const {data:p} = await sb.from('profiles').select('role').eq('id',session.user.id).single();
+  go(p?.role);
+});
+
+let selRole = 'presenter';
+
+window.tab = (t)=>{
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='reg')));
+  document.getElementById('p-login').classList.toggle('on',t==='login');
+  document.getElementById('p-reg').classList.toggle('on',t==='reg');
+};
+
+window.role = (r)=>{
+  selRole=r;
+  document.getElementById('ro-presenter').classList.toggle('active',r==='presenter');
+  document.getElementById('ro-audience').classList.toggle('active',r==='audience');
+};
+
+window.login = async ()=>{
+  const email=document.getElementById('l-email').value.trim();
+  const pass =document.getElementById('l-pass').value;
+  const err  =document.getElementById('l-err');
+  err.textContent='';
+  if(!email||!pass){err.textContent='Preenche todos os campos.';return;}
+  document.querySelector('#p-login .btn').disabled=true;
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){err.textContent=pt(error.message);document.querySelector('#p-login .btn').disabled=false;return;}
+  const {data:p}=await sb.from('profiles').select('role').eq('id',data.user.id).single();
+  go(p?.role);
+};
+
+window.register = async ()=>{
+  const name =document.getElementById('r-name').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pass =document.getElementById('r-pass').value;
+  const err  =document.getElementById('r-err');
+  err.textContent='';
+  if(!name||!email||!pass){err.textContent='Preenche todos os campos.';return;}
+  document.querySelector('#p-reg .btn').disabled=true;
+  const {error}=await sb.auth.signUp({
+    email,password:pass,
+    options:{data:{name,role:selRole}}
+  });
+  if(error){err.textContent=pt(error.message);document.querySelector('#p-reg .btn').disabled=false;return;}
+  // Aguarda o trigger criar o perfil e redireciona
+  setTimeout(()=>go(selRole),800);
+};
+
+function go(role){
+  window.location.href = role==='presenter' ? 'presenter.html' : 'audience.html';
+}
+
+function pt(msg){
+  if(msg.includes('Invalid login'))return'Email ou palavra-passe incorrectos.';
+  if(msg.includes('already registered'))return'Este email já está registado.';
+  if(msg.includes('Password should'))return'A palavra-passe precisa de pelo menos 6 caracteres.';
+  return msg;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  if(document.getElementById('p-login').classList.contains('on'))window.login();
+  else window.register();
+});
+</script>
+</body>
+</html>
