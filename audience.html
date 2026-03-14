@@ -370,28 +370,54 @@ function renderQuestion(){
   }
   if(q.type==='rating'){
     const sMin=q.scale_min??1,sMax=q.scale_max??5,range=sMax-sMin||1;
-    const stmts=q.options||[''],midLabels=q.scale_mid_labels||[];
-    const allLabels={};
-    if(q.scale_label_min)allLabels[sMin]=q.scale_label_min;
-    if(q.scale_label_max)allLabels[sMax]=q.scale_label_max;
-    midLabels.forEach(m=>{if(m.label)allLabels[m.value]=m.label;});
+    const stmts=q.options||[];
     const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
-    const mid=Math.round((sMin+sMax)/2);
-    body=`<div class="scale-stmts">${stmts.map((s,i)=>`
-      <div class="scale-stmt-row">
-        <div class="scale-stmt-label"><span>${s}</span>${q.statements_optional?'<span class="opt-tag">opcional</span>':''}</div>
-        <div class="scale-slider-wrap">
-          <input type="range" class="scale-slider" id="slider-${i}"
-            min="${sMin}" max="${sMax}" step="1" value="${mid}"
-            oninput="updSlider(${i},this.value)"
-            data-stmt="${s.replace(/"/g,'&quot;')}" data-active="false">
-          <div class="scale-val-bubble" id="bub-${i}" style="left:50%">${mid}</div>
-          <div class="scale-ticks">
-            ${ticks.map(v=>{const left=((v-sMin)/range*100).toFixed(1);return`<div class="scale-tick" style="left:${left}%"><div class="tick-mark"></div><div class="tick-lbl">${v}</div></div>`;}).join('')}
-          </div>
+    const showAvg=q.show_avg!==false;
+    const showDistrib=q.show_distrib!==false;
+    const parsed=rs.map(r=>{try{return JSON.parse(r.answer);}catch(e){return null;}}).filter(Boolean);
+    if(!parsed.length){body.innerHTML='<p style="color:var(--muted);font-size:.7rem;">Sem respostas ainda...</p>';return;}
+    body.innerHTML=stmts.map((stmt,si)=>{
+      const col=PAL[si%PAL.length];
+      const counts=Object.fromEntries(ticks.map(v=>[v,0]));
+      parsed.forEach(p=>{const v=p[stmt];if(v!=null&&counts[v]!==undefined)counts[v]++;});
+      const total=Object.values(counts).reduce((a,b)=>a+b,0);
+      const avgVal=total?(Object.entries(counts).reduce((s,[v,cnt])=>s+(parseInt(v)*cnt),0)/total).toFixed(1):null;
+      const maxC=Math.max(...Object.values(counts),1);
+
+      const distribHTML=showDistrib?`
+        <div style="position:relative;height:40px;margin-bottom:3px;">
+          ${ticks.map(v=>{const cnt=counts[v]||0;const pct=maxC?Math.round(cnt/maxC*100):0;const left=((v-sMin)/range*100).toFixed(1);const h=Math.max(pct*0.34,cnt>0?3:0);return`<div style="position:absolute;bottom:0;left:${left}%;transform:translateX(-50%);width:22px;display:flex;flex-direction:column;align-items:center;gap:1px;">${cnt>0?`<span style="font-size:.52rem;color:${col};">${cnt}</span>`:''}<div style="width:18px;height:${h}px;background:${col};border-radius:2px 2px 0 0;opacity:.8;"></div></div>`;}).join('')}
         </div>
-      </div>`).join('')}</div>`;
+        <div style="position:relative;height:5px;background:var(--border);border-radius:3px;margin-bottom:14px;">
+          ${avgVal?`<div style="position:absolute;top:50%;left:${((parseFloat(avgVal)-sMin)/range*100).toFixed(1)}%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:${col};border:2px solid var(--surface);"></div>`:''}
+        </div>`:'';
+
+      const ticksHTML=`<div style="position:relative;height:14px;">${ticks.map(v=>`<span style="position:absolute;left:${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.55rem;color:var(--muted);white-space:nowrap;">${v}</span>`).join('')}</div>`;
+
+      const avgOnlyHTML=!showDistrib&&showAvg&&avgVal?`
+        <div style="display:flex;align-items:center;gap:.65rem;margin-top:.35rem;padding:.5rem .75rem;background:var(--bg);border-radius:4px;">
+          <div style="flex:1;height:5px;background:var(--border);border-radius:3px;position:relative;">
+            <div style="position:absolute;top:50%;left:${((parseFloat(avgVal)-sMin)/range*100).toFixed(1)}%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:${col};border:2px solid var(--surface);"></div>
+          </div>
+          <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:${col};min-width:2rem;text-align:right;">${avgVal}</span>
+        </div>
+        <div style="position:relative;height:13px;margin-top:3px;">${ticks.map(v=>`<span style="position:absolute;left:${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.54rem;color:var(--muted);">${v}</span>`).join('')}</div>
+      `:'';
+
+      return`<div style="margin-bottom:1.1rem;">
+        <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.45rem;flex-wrap:wrap;">
+          <span style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;"></span>
+          <span style="font-size:.8rem;color:var(--text);flex:1;">${esc(stmt)}</span>
+          ${showAvg&&avgVal&&showDistrib?`<span style="font-family:'Syne',sans-serif;font-weight:800;color:${col};">${avgVal}</span>`:''}
+          <span style="font-size:.58rem;color:var(--muted);">${total} resp.</span>
+        </div>
+        ${distribHTML}
+        ${showDistrib?ticksHTML:''}
+        ${avgOnlyHTML}
+      </div>`;
+    }).join('');
   }
+
   wrap.innerHTML=`
     <div class="qcard">
       <span class="qtag qt-${q.type}">${labels[q.type]||q.type}</span>
