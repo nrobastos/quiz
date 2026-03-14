@@ -218,6 +218,93 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 #loader.on{display:flex;}
 .spin{width:30px;height:30px;border:2px solid rgba(255,255,255,.12);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── RESPONSIVE ── */
+/* Mobile: hide sidebar, show toggle */
+.sidebar-toggle{display:none;background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:4px;padding:.3rem .55rem;font-size:.7rem;cursor:pointer;flex-shrink:0;}
+.sidebar-toggle:hover{border-color:var(--muted2);color:var(--text);}
+
+@media(max-width:900px){
+  .pr{display:none;}
+  .pr.mob-open{display:flex;position:fixed;top:0;right:0;bottom:0;width:220px;z-index:200;box-shadow:-4px 0 20px rgba(0,0,0,.4);}
+  .sidebar-toggle{display:block;}
+  .mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190;}
+  .mob-overlay.on{display:block;}
+}
+@media(max-width:700px){
+  .pl{width:200px;}
+  .escroll{padding:1rem;}
+}
+@media(max-width:560px){
+  .pl{display:none;}
+  .pl.mob-open{display:flex;position:fixed;top:0;left:0;bottom:0;width:240px;z-index:200;box-shadow:4px 0 20px rgba(0,0,0,.4);}
+  .layout{overflow:auto;}
+  .pc{min-width:0;}
+  .escroll{padding:.85rem;}
+  .qhcard{flex-wrap:wrap;}
+  .qhcard input{min-width:0;width:100%;}
+  .q-rows .qrow{padding:.75rem .9rem;}
+  .qrow-acts{opacity:1;}/* always show on touch */
+  .topbar .logo{font-size:1.1rem;}
+}
+
+/* ── QUESTION PREVIEW ── */
+.preview-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+}
+.preview-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.7rem 1.1rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.03);
+}
+.preview-hd h3{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.45rem;}
+.preview-eye{font-size:.85rem;opacity:.7;}
+.preview-body{padding:1.25rem 1.5rem;}
+
+/* audience-style elements inside presenter preview */
+.prev-qtag{display:inline-block;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;padding:.18rem .5rem;border-radius:4px;margin-bottom:.75rem;}
+.prev-t-multiple_choice{background:rgba(61,158,255,.15);color:#7ab8ff;border:1px solid rgba(61,158,255,.2);}
+.prev-t-word_cloud{background:rgba(61,189,122,.15);color:#7adda8;border:1px solid rgba(61,189,122,.2);}
+.prev-t-open_text{background:rgba(240,90,90,.15);color:#ff9090;border:1px solid rgba(240,90,90,.2);}
+.prev-t-rating{background:rgba(240,180,41,.15);color:#f5c85a;border:1px solid rgba(240,180,41,.2);}
+.prev-qtext{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;line-height:1.35;color:var(--text);margin-bottom:1rem;}
+
+.prev-mc-list{display:flex;flex-direction:column;gap:.45rem;}
+.prev-mc-opt{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.65rem .9rem;
+  border:1px solid var(--border2);border-radius:4px;
+  background:rgba(255,255,255,.04);font-size:.8rem;color:var(--text);
+  position:relative;overflow:hidden;
+}
+.prev-mc-bar{width:4px;height:100%;position:absolute;left:0;top:0;border-radius:4px 0 0 4px;}
+.prev-mc-letter{width:20px;height:20px;border-radius:3px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;color:var(--muted);}
+.prev-correct{color:var(--green);margin-left:auto;font-size:.75rem;flex-shrink:0;}
+
+.prev-scale-stmts{display:flex;flex-direction:column;gap:1.25rem;}
+.prev-scale-row{display:flex;flex-direction:column;gap:.5rem;}
+.prev-scale-label{font-size:.82rem;font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
+.prev-scale-track{height:5px;background:rgba(255,255,255,.1);border-radius:3px;position:relative;margin-bottom:18px;}
+.prev-scale-ticks{display:flex;justify-content:space-between;margin-top:4px;}
+.prev-scale-tick-lbl{font-size:.57rem;color:var(--muted2);}
+
+.prev-open-box{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:4px;padding:.65rem .9rem;
+  font-size:.78rem;color:var(--muted2);min-height:64px;
+  font-style:italic;
+}
+.prev-word-box{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:4px;padding:.6rem .9rem;
+  font-size:.78rem;color:var(--muted2);
+  font-style:italic;
+}
+.preview-empty{padding:.75rem;font-size:.7rem;color:var(--muted);text-align:center;}
 </style>
 </head>
 <body>
@@ -228,7 +315,8 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     <span class="dot"></span>
     <div><div class="cl">Código activo</div><div class="cv" id="top-code">——</div></div>
   </div>
-  <div style="display:flex;gap:.5rem;">
+  <div style="display:flex;gap:.5rem;align-items:center;">
+    <button class="sidebar-toggle" onclick="toggleRightPanel()" title="Controlos" id="right-toggle">⚙ Ctrl</button>
     <button class="btn btn-ghost btn-sm" onclick="copyLink()">⎘ Link</button>
     <button class="btn btn-ghost btn-sm" onclick="logout()">Sair</button>
   </div>
@@ -238,7 +326,9 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
   <div class="pl">
     <div class="phd">
       <h3>Questionários</h3>
-      <button class="btn btn-accent btn-sm" onclick="openNewQuiz()">+ Novo</button>
+      <div style="display:flex;gap:.35rem;">
+        <button class="btn btn-accent btn-sm" onclick="openNewQuiz()">+ Novo</button>
+      </div>
     </div>
     <div class="qlist" id="qlist"><div style="color:var(--muted);font-size:.68rem;text-align:center;margin-top:2rem;">Sem questionários</div></div>
   </div>
@@ -325,6 +415,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
   </div>
 </div>
 
+<div id="mob-overlay" class="mob-overlay" onclick="closeMobPanels()"></div>
 <div id="toast"></div>
 <div id="loader"><div class="spin"></div></div>
 
@@ -425,11 +516,106 @@ function renderCenter(){
       </div>
     </div>
     <div id="qedit-area"></div>
+    <div id="preview-area"></div>
     <div id="results-area"></div>
   `;
   if(selQ) renderQEditor();
+  renderPreview(); // always show preview for selected Q
   if(curQuiz.active_question_id) subscribeResponses();
   typeset();
+}
+
+
+// ── QUESTION PREVIEW ─────────────────────────────────────
+// Shows a read-only preview of any selected question as the audience sees it.
+// Visible at all times once a question is selected, regardless of live state.
+function renderPreview(){
+  const area = document.getElementById('preview-area');
+  if(!area) return;
+  const q = selQ;
+  if(!q){ area.innerHTML=''; return; }
+
+  const labels={multiple_choice:'Múltipla escolha',word_cloud:'Nuvem de palavras',open_text:'Pergunta aberta',rating:'Escala'};
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let bodyHTML='';
+
+  if(q.type==='multiple_choice'){
+    const correct=new Set(q.correct_answers||[]);
+    const opts=q.options||[];
+    if(!opts.length){bodyHTML='<div class="preview-empty">Sem opções definidas</div>';}
+    else{
+      bodyHTML=`<div class="prev-mc-list">${opts.map((o,i)=>`
+        <div class="prev-mc-opt">
+          <span class="prev-mc-bar" style="background:${PAL[i%PAL.length]};"></span>
+          <span class="prev-mc-letter">${letters[i]}</span>
+          <span>${esc(o)||'<em style="opacity:.4">Opção '+(i+1)+'</em>'}</span>
+          ${correct.has(o)?'<span class="prev-correct">✓ correcta</span>':''}
+        </div>`).join('')}</div>`;
+    }
+  }
+
+  if(q.type==='word_cloud'){
+    bodyHTML=`<div class="prev-word-box">A audiência escreve uma palavra...</div>`;
+  }
+
+  if(q.type==='open_text'){
+    bodyHTML=`<div class="prev-open-box">A audiência escreve a sua resposta livremente...</div>`;
+  }
+
+  if(q.type==='rating'){
+    const sMin=q.scale_min??1, sMax=q.scale_max??5, range=sMax-sMin||1;
+    const stmts=q.options||[];
+    const midLabels=q.scale_mid_labels||[];
+    const allLabels={};
+    if(q.scale_label_min) allLabels[sMin]=q.scale_label_min;
+    if(q.scale_label_max) allLabels[sMax]=q.scale_label_max;
+    midLabels.forEach(m=>{if(m.label)allLabels[m.value]=m.label;});
+    const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
+
+    if(!stmts.length){bodyHTML='<div class="preview-empty">Sem afirmações definidas</div>';}
+    else{
+      bodyHTML=`<div class="prev-scale-stmts">${stmts.map((s,i)=>{
+        const col=PAL[i%PAL.length];
+        const mid=Math.round((sMin+sMax)/2);
+        const midPct=((mid-sMin)/range*100).toFixed(1);
+        return`<div class="prev-scale-row">
+          <div class="prev-scale-label">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col};margin-right:.4rem;vertical-align:middle;"></span>
+            ${esc(s)||'<em style="opacity:.4">Afirmação '+(i+1)+'</em>'}
+            ${q.statements_optional?'<span style="font-size:.55rem;color:var(--muted);margin-left:.4rem;">(opcional)</span>':''}
+          </div>
+          <div class="prev-scale-track">
+            <div style="position:absolute;top:50%;left:${midPct}%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:${col};opacity:.5;border:2px solid var(--surface2);"></div>
+          </div>
+          <div class="prev-scale-ticks">
+            ${ticks.map(v=>{
+              const lbl=allLabels[v]||v;
+              const visible=allLabels[v]||v===sMin||v===sMax;
+              return visible?`<span class="prev-scale-tick-lbl" style="color:${allLabels[v]&&allLabels[v]!==String(v)?'var(--accent)':'var(--muted2)'}">${lbl}</span>`:'<span></span>';
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}</div>`;
+    }
+  }
+
+  area.innerHTML=`
+    <div class="preview-card">
+      <div class="preview-hd">
+        <h3><span class="preview-eye">👁</span> Pré-visualização — como a audiência verá</h3>
+        <span class="tbadge t-${q.type}">${labels[q.type]||q.type}</span>
+      </div>
+      <div class="preview-body">
+        <div class="prev-qtag prev-t-${q.type}">${labels[q.type]||q.type}</div>
+        <div class="prev-qtext">${q.question||'<em style="opacity:.4">Sem pergunta definida</em>'}</div>
+        ${bodyHTML}
+      </div>
+    </div>`;
+
+  // Typeset LaTeX in the preview
+  if(window.MathJax?.typesetPromise){
+    window.MathJax.typesetPromise([area]).catch(()=>{});
+  }
 }
 
 // ── QUESTION EDITOR ───────────────────────────────────────
@@ -645,6 +831,7 @@ window.saveQuestion = async ()=>{
   await loadQuestions();
   selQ = questions.find(q=>q.id===selQ.id)||null;
   renderCenter();
+  renderPreview();
   toast('Guardado');loading(false);
 };
 
@@ -1011,6 +1198,16 @@ function openModal(id){document.getElementById(id)?.classList.add('on');}
 window.closeModal=(id)=>{document.getElementById(id)?.classList.remove('on');}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
 function loading(v){document.getElementById('loader').classList.toggle('on',v);}
+window.toggleRightPanel=()=>{
+  const pr=document.querySelector('.pr');
+  const ov=document.getElementById('mob-overlay');
+  const open=pr.classList.toggle('mob-open');
+  if(ov) ov.classList.toggle('on',open);
+};
+window.closeMobPanels=()=>{
+  document.querySelectorAll('.mob-open').forEach(el=>el.classList.remove('mob-open'));
+  document.getElementById('mob-overlay')?.classList.remove('on');
+};
 function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='on'+(type==='err'?' err':'');clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('on'),2600);}
 </script>
 </body>
