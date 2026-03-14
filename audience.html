@@ -387,7 +387,7 @@ function renderQuestion(){
             data-stmt="${s.replace(/"/g,'&quot;')}" data-active="false">
           <div class="scale-val-bubble" id="bub-${i}" style="left:50%">${mid}</div>
           <div class="scale-ticks">
-            ${ticks.map(v=>{const lbl=allLabels[v];const left=((v-sMin)/range*100).toFixed(1);return`<div class="scale-tick" style="left:${left}%"><div class="tick-mark"></div><div class="tick-lbl">${lbl||v}</div></div>`;}).join('')}
+            ${ticks.map(v=>{const left=((v-sMin)/range*100).toFixed(1);return`<div class="scale-tick" style="left:${left}%"><div class="tick-mark"></div><div class="tick-lbl">${v}</div></div>`;}).join('')}
           </div>
         </div>
       </div>`).join('')}</div>`;

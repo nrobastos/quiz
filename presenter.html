@@ -595,11 +595,7 @@ function renderPreview(){
             <div style="position:absolute;top:50%;left:${midPct}%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:${col};opacity:.5;border:2px solid var(--surface2);"></div>
           </div>
           <div class="prev-scale-ticks">
-            ${ticks.map(v=>{
-              const lbl=allLabels[v]||v;
-              const visible=allLabels[v]||v===sMin||v===sMax;
-              return visible?`<span class="prev-scale-tick-lbl" style="color:${allLabels[v]&&allLabels[v]!==String(v)?'var(--accent)':'var(--muted2)'}">${lbl}</span>`:'<span></span>';
-            }).join('')}
+            ${ticks.map(v=>`<span class="prev-scale-tick-lbl">${v}</span>`).join('')}
           </div>
         </div>`;
       }).join('')}</div>`;
