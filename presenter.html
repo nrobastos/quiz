@@ -893,6 +893,156 @@ window.toggleResults = async ()=>{
   toast(newVal?'Resultados visíveis para a audiência':'Resultados ocultados');
 };
 
+// ── QUIZ CRUD ─────────────────────────────────────────────
+window.openNewQuiz=()=>{document.getElementById('new-quiz-title').value='';openModal('modal-new-quiz');};
+window.createQuiz=async()=>{
+  const title=document.getElementById('new-quiz-title').value.trim();
+  if(!title){toast('Dá um título','err');return;}
+  loading(true);closeModal('modal-new-quiz');
+  const {data,error}=await sb.from('quizzes').insert({presenter_id:user.id,title}).select().single();
+  if(error){toast('Erro: '+error.message,'err');loading(false);return;}
+  await loadQuizzes();await selQuiz(data.id);loading(false);toast('Questionário criado');
+};
+window.saveQuizTitle=async()=>{
+  if(!curQuiz)return;
+  const title=document.getElementById('quiz-title-input')?.value.trim();
+  if(!title)return;
+  await sb.from('quizzes').update({title}).eq('id',curQuiz.id);
+  curQuiz.title=title;await loadQuizzes();toast('Título guardado');
+};
+window.deleteQuiz=async()=>{
+  if(!curQuiz||!confirm('Eliminar este questionário e todas as suas perguntas?'))return;
+  loading(true);
+  await sb.from('quizzes').delete().eq('id',curQuiz.id);
+  curQuiz=null;selQ=null;questions=[];
+  if(respSub){sb.removeChannel(respSub);respSub=null;}
+  if(quizSub){sb.removeChannel(quizSub);quizSub=null;}
+  await loadQuizzes();
+  document.getElementById('escroll').innerHTML='<div class="empty"><div class="empty-icon">◈</div><p>Selecciona um questionário</p></div>';
+  loading(false);toast('Eliminado');
+};
+
+// ── ADD QUESTION ──────────────────────────────────────────
+window.openAddQ=()=>{if(!curQuiz){toast('Selecciona um questionário','err');return;}openModal('modal-add-q');};
+window.selType=(el)=>{document.querySelectorAll('.type-opt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');newQType=el.dataset.t;};
+window.addQuestion=async()=>{
+  loading(true);closeModal('modal-add-q');
+  const defs={
+    multiple_choice:{options:['Opção A','Opção B'],correct_answers:[]},
+    word_cloud:{},open_text:{},
+    rating:{options:['Afirmação 1'],scale_min:1,scale_max:5,
+      scale_label_min:'Discordo',scale_label_max:'Concordo',
+      scale_mid_labels:[],statements_optional:false,show_avg:true,show_distrib:true}
+  };
+  const {data,error}=await sb.from('questions').insert({
+    quiz_id:curQuiz.id,type:newQType,question:'Nova pergunta',
+    q_order:questions.length,...defs[newQType]
+  }).select().single();
+  if(error){toast('Erro: '+error.message,'err');loading(false);return;}
+  await loadQuestions();selQ=questions.find(q=>q.id===data.id)||null;
+  renderCenter();loading(false);toast('Pergunta adicionada');
+};
+
+// Scale statement helpers
+window.addStmt=()=>{
+  if(!selQ)return;selQ.options=selQ.options||[];selQ.options.push('');
+  const i=selQ.options.length-1;
+  const w=document.getElementById('stmts-wrap');
+  if(!w)return;
+  const d=document.createElement('div');d.className='opt-row';
+  d.innerHTML=`<input type="text" value="" placeholder="Afirmação ${i+1}" oninput="updStmt(${i},this.value)" style="border-left:3px solid ${PAL[i%PAL.length]}40;"><button class="ico-btn" onclick="rmStmt(${i})">&#x2715;</button>`;
+  w.appendChild(d);
+};
+window.updStmt=(i,v)=>{if(selQ?.options)selQ.options[i]=v;};
+window.rmStmt=(i)=>{
+  if(!selQ?.options||selQ.options.length<=1){toast('Mínimo 1 afirmação','err');return;}
+  selQ.options.splice(i,1);
+  const w=document.getElementById('stmts-wrap');
+  if(w) w.innerHTML=selQ.options.map((s,idx)=>`
+    <div class="opt-row">
+      <input type="text" value="${esc(s)}" placeholder="Afirmação ${idx+1}" oninput="updStmt(${idx},this.value)"
+        style="border-left:3px solid ${PAL[idx%PAL.length]}40;">
+      <button class="ico-btn" onclick="rmStmt(${idx})">&#x2715;</button>
+    </div>`).join('');
+};
+window.addMidLabel=()=>{
+  if(!selQ)return;selQ.scale_mid_labels=selQ.scale_mid_labels||[];
+  const midVal=Math.round(((selQ.scale_min||1)+(selQ.scale_max||5))/2);
+  selQ.scale_mid_labels.push({value:midVal,label:''});
+  const i=selQ.scale_mid_labels.length-1;
+  const w=document.getElementById('mid-labels-wrap');
+  if(!w)return;
+  const d=document.createElement('div');d.className='opt-row';d.style.gap='.4rem';
+  d.innerHTML=`<input type="number" value="${midVal}" placeholder="Valor" style="width:80px;flex:none;" oninput="updMidLabel(${i},'value',parseInt(this.value))"><input type="text" value="" placeholder="ex: Neutro" oninput="updMidLabel(${i},'label',this.value)"><button class="ico-btn" onclick="rmMidLabel(${i})">&#x2715;</button>`;
+  w.appendChild(d);
+};
+window.updMidLabel=(i,k,v)=>{if(selQ?.scale_mid_labels?.[i])selQ.scale_mid_labels[i][k]=v;};
+window.rmMidLabel=(i)=>{
+  if(!selQ?.scale_mid_labels)return;
+  selQ.scale_mid_labels.splice(i,1);
+  const w=document.getElementById('mid-labels-wrap');
+  if(w) w.innerHTML=selQ.scale_mid_labels.map((m,idx)=>`
+    <div class="opt-row" style="gap:.4rem;">
+      <input type="number" value="${m.value}" placeholder="Valor" style="width:80px;flex:none;" oninput="updMidLabel(${idx},'value',parseInt(this.value))">
+      <input type="text" value="${esc(m.label)}" placeholder="ex: Neutro" oninput="updMidLabel(${idx},'label',this.value)">
+      <button class="ico-btn" onclick="rmMidLabel(${idx})">&#x2715;</button>
+    </div>`).join('');
+};
+
+// ── START / STOP ──────────────────────────────────────────
+window.startQuiz=async()=>{
+  if(!curQuiz){toast('Selecciona um questionário','err');return;}
+  if(!questions.length){toast('Adiciona pelo menos uma pergunta','err');return;}
+  const other=quizzes.find(q=>q.is_live&&q.id!==curQuiz.id);
+  if(other){
+    if(!confirm(`"${other.title}" está activo. Parar e iniciar este?`))return;
+    await sb.from('quizzes').update({is_live:false,live_code:null,active_question_id:null,show_results:false}).eq('id',other.id);
+  }
+  loading(true);
+  const code=genCode();
+  await sb.from('quizzes').update({
+    is_live:true,live_code:code,
+    started_at:new Date().toISOString(),
+    active_question_id:questions[0].id,
+    show_results:false
+  }).eq('id',curQuiz.id);
+  curQuiz={...curQuiz,is_live:true,live_code:code,active_question_id:questions[0].id,show_results:false};
+  renderQuizList();renderCenter();subscribeResponses();
+  document.getElementById('modal-code').textContent=code;
+  const audienceBase=location.href.replace('presenter.html','audience.html');
+  document.getElementById('modal-link').textContent=audienceBase+'?code='+code;
+  openModal('modal-start');updateTopLive();updateLiveBtns();updateResultsBtn();
+  loading(false);
+};
+
+window.stopQuiz=async()=>{
+  if(!curQuiz)return;loading(true);
+  await sb.from('quizzes').update({is_live:false,live_code:null,active_question_id:null,show_results:false}).eq('id',curQuiz.id);
+  curQuiz={...curQuiz,is_live:false,live_code:null,active_question_id:null,show_results:false};
+  renderQuizList();renderCenter();updateTopLive();updateLiveBtns();updateResultsBtn();
+  loading(false);toast('Questionário parado');
+};
+
+window.resetQ=async()=>{
+  if(!curQuiz?.active_question_id||!confirm('Limpar respostas desta pergunta?'))return;
+  loading(true);await sb.from('responses').delete().eq('question_id',curQuiz.active_question_id);
+  loading(false);toast('Respostas eliminadas');
+};
+
+// ── REALTIME ──────────────────────────────────────────────
+function subscribeQuiz(){
+  if(quizSub){sb.removeChannel(quizSub);quizSub=null;}
+  if(!curQuiz)return;
+  quizSub=sb.channel('quiz-p-'+curQuiz.id)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'quizzes',filter:`id=eq.${curQuiz.id}`},
+      async(payload)=>{
+        curQuiz={...curQuiz,...payload.new};
+        renderCenter();subscribeResponses();updateTopLive();updateLiveBtns();updateResultsBtn();
+      })
+    .subscribe();
+}
+
+
 function updateResultsBtn(){
   const btn=document.getElementById('btn-results');
   if(!btn) return;
