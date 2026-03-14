@@ -490,6 +490,7 @@ function renderResults(rs){
 
   if(q.type==='multiple_choice'){
     const opts=q.options||[];const correct=new Set(q.correct_answers||[]);
+    if(!rs.length){body.innerHTML='<p style="color:var(--muted);font-size:.7rem;">Sem respostas ainda...</p>';return;}
     const counts=Object.fromEntries(opts.map(o=>[o,0]));
     rs.forEach(r=>{if(counts[r.answer]!==undefined)counts[r.answer]++;});
     const total=rs.length||1;
@@ -503,7 +504,7 @@ function renderResults(rs){
   if(q.type==='word_cloud'){
     const freq={};rs.forEach(r=>{const w=(r.answer||'').toLowerCase().trim();if(w)freq[w]=(freq[w]||0)+1;});
     const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,40);const max=sorted[0]?.[1]||1;
-    body.innerHTML=`<div class="wcloud">${sorted.map(([w,n],i)=>{const sz=0.75+(n/max)*1.6;const c=PAL[i%PAL.length];return`<span class="wtag" style="font-size:${sz}rem;background:${c}15;color:${c};border:1px solid ${c}30;">${w} <small style="opacity:.5;font-size:.7em;">${n}</small></span>`;}).join('')}</div>`;
+    body.innerHTML=`<div class="wcloud">${sorted.map(([w,n],i)=>{const sz=0.82+(n/max)*2.1;const c=PAL[i%PAL.length];return`<span class="wtag" style="font-size:${sz}rem;background:${c}15;color:${c};border:1px solid ${c}30;">${w}</span>`;}).join('')}</div>`;
     return;
   }
   if(q.type==='open_text'){
@@ -519,6 +520,7 @@ function renderResults(rs){
     midLabels.forEach(m=>{if(m.label)allLabels[m.value]=m.label;});
     const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
     const parsed=rs.map(r=>{try{return JSON.parse(r.answer);}catch(e){return null;}}).filter(Boolean);
+    if(!parsed.length){body.innerHTML='<p style="color:var(--muted);font-size:.7rem;">Sem respostas ainda...</p>';return;}
     body.innerHTML=stmts.map((stmt,si)=>{
       const col=PAL[si%PAL.length];
       const counts=Object.fromEntries(ticks.map(v=>[v,0]));
@@ -539,7 +541,7 @@ function renderResults(rs){
           ${avgVal?`<div style="position:absolute;top:50%;left:${((parseFloat(avgVal)-sMin)/range*100).toFixed(1)}%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:${col};border:2px solid var(--surface);"></div>`:''}
         </div>
         <div style="position:relative;height:13px;">
-          ${ticks.map(v=>{const lbl=allLabels[v];if(!lbl&&v!==sMin&&v!==sMax)return'';return`<span style="position:absolute;left:${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.54rem;color:var(--muted);white-space:nowrap;">${lbl||v}</span>`;}).join('')}
+          ${ticks.map(v=>`<span style="position:absolute;left:${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.54rem;color:var(--muted);white-space:nowrap;">${v}</span>`).join('')}
         </div>
         <div style="font-size:.56rem;color:var(--muted);margin-top:.12rem;">${total} resposta${total!==1?'s':''}</div>
       </div>`;

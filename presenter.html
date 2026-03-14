@@ -375,10 +375,16 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     <div class="code-reveal">
       <div class="lbl">Código de acesso</div>
       <div class="code" id="modal-code">——</div>
-      <div class="sub">audience.html → introduzir código</div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:3px;padding:.85rem 1rem;margin-bottom:1.75rem;">
+      <div style="font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">Link directo para a audiência</div>
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <span id="modal-link" style="font-size:.68rem;color:var(--accent2);word-break:break-all;flex:1;"></span>
+        <button class="btn btn-ghost btn-sm" onclick="copyLink()" style="flex-shrink:0;">⎘ Copiar</button>
+      </div>
     </div>
     <div class="mact">
-      <button class="btn btn-ghost" onclick="copyCode()">⎘ Copiar</button>
+      <button class="btn btn-ghost" onclick="copyCode()">⎘ Código</button>
       <button class="btn btn-accent" onclick="closeModal('modal-start')">OK, fechar</button>
     </div>
   </div>
@@ -423,6 +429,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const SUPABASE_URL = 'https://afdesdgltdsfwkburmuc.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZGVzZGdsdGRzZndrYnVybXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzcwMTgsImV4cCI6MjA4OTAxMzAxOH0.bdyHF7EODlXW0GyKLdeKLzsmIGNGGc3qC13ogM5amEY';
+
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Palette — one colour per option index, consistent
@@ -932,6 +939,7 @@ function renderMentiBar(body, q, rs){
   rs.forEach(r=>{if(counts[r.answer]!==undefined)counts[r.answer]++;});
   const total=rs.length||1;
 
+  if(!rs.length){body.innerHTML='<p style="color:var(--muted);font-size:.72rem;padding:.5rem 0;">Sem respostas ainda...</p>';return;}
   body.innerHTML=`<div class="menti-bars">${opts.map((opt,i)=>{
     const count=counts[opt]||0;
     const pct=Math.round(count/total*100);
@@ -961,8 +969,8 @@ function renderWordCloud(body, rs){
   const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,50);
   const max=sorted[0]?.[1]||1;
   body.innerHTML=`<div class="wcloud">${sorted.map(([w,n],i)=>{
-    const sz=0.78+(n/max)*1.9;const c=PAL[i%PAL.length];
-    return`<span class="wtag" style="font-size:${sz}rem;background:${c}18;color:${c};border:1px solid ${c}33;">${w} <small style="opacity:.5;font-size:.7em;">${n}</small></span>`;
+    const sz=0.82+(n/max)*2.1;const c=PAL[i%PAL.length];
+    return`<span class="wtag" style="font-size:${sz}rem;background:${c}18;color:${c};border:1px solid ${c}33;">${w}</span>`;
   }).join('')}</div>`;
 }
 
@@ -1026,13 +1034,11 @@ function renderRating(body, q, rs){
       <div style="position:relative;height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:20px;">
         ${avgVal?`<div style="position:absolute;top:50%;left:${((parseFloat(avgVal)-sMin)/Math.max(range,1)*100).toFixed(1)}%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:${col};border:2px solid var(--surface);z-index:2;"></div>`:''}
       </div>
-      <!-- Tick labels -->
+      <!-- Tick labels: show every integer -->
       <div style="position:relative;height:18px;">
         ${ticks.map(v=>{
           const left=((v-sMin)/Math.max(range,1)*100).toFixed(1);
-          const lbl=allLabels[v];
-          if(!lbl&&v!==sMin&&v!==sMax) return '';
-          return `<span style="position:absolute;left:${left}%;transform:translateX(-50%);font-size:.6rem;color:${lbl&&lbl!==String(v)?'var(--accent)':'var(--muted2)'};white-space:nowrap;">${lbl||v}</span>`;
+          return `<span style="position:absolute;left:${left}%;transform:translateX(-50%);font-size:.6rem;color:var(--muted2);white-space:nowrap;">${v}</span>`;
         }).join('')}
       </div>
       <div style="font-size:.6rem;color:var(--muted);margin-top:.25rem;">${total} resposta${total!==1?'s':''}</div>
@@ -1143,6 +1149,8 @@ window.startQuiz=async()=>{
   curQuiz={...curQuiz,is_live:true,live_code:code,active_question_id:questions[0].id,show_results:false};
   renderQuizList();renderCenter();subscribeResponses();
   document.getElementById('modal-code').textContent=code;
+  const audienceBase=location.href.replace('presenter.html','audience.html');
+  document.getElementById('modal-link').textContent=audienceBase+'?code='+code;
   openModal('modal-start');updateTopLive();updateLiveBtns();updateResultsBtn();
   loading(false);
 };
