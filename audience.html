@@ -141,6 +141,44 @@ textarea:focus,.word-inp:focus{border-color:var(--text);}
 :root{
   --c0:#1a6fd4;--c1:#d4760a;--c2:#1d8a52;--c3:#c43030;--c4:#7a4fd4;--c5:#d4941a;--c6:#0a9e9e;--c7:#c4306e;
 }
+
+/* ── SCALE SLIDERS ── */
+.scale-stmts{display:flex;flex-direction:column;gap:1.75rem;margin-top:1.5rem;}
+.scale-stmt-row{display:flex;flex-direction:column;gap:.65rem;}
+.scale-stmt-label{font-size:.9rem;font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:.6rem;}
+.opt-tag{font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(212,118,10,.1);color:var(--accent);border:1px solid rgba(212,118,10,.2);padding:.1rem .4rem;border-radius:2px;font-family:'Fira Code',monospace;font-weight:400;}
+.scale-slider-wrap{position:relative;padding:0 0 2.5rem 0;}
+.scale-slider{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:6px;border-radius:3px;
+  background:linear-gradient(to right,var(--accent2) 0%,var(--accent2) 50%,var(--border) 50%,var(--border) 100%);
+  outline:none;cursor:pointer;
+}
+.scale-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--accent2);border:3px solid var(--surface);
+  box-shadow:0 2px 8px rgba(26,111,212,.4);
+  cursor:pointer;transition:transform .15s,background .15s;
+}
+.scale-slider::-webkit-slider-thumb:hover{transform:scale(1.2);background:#3d8bff;}
+.scale-slider::-moz-range-thumb{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--accent2);border:3px solid var(--surface);cursor:pointer;
+}
+.scale-ticks{position:absolute;bottom:0;left:0;right:0;height:2.2rem;}
+.scale-tick{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tick-mark{width:1px;height:6px;background:var(--border2);}
+.tick-lbl{font-size:.58rem;color:var(--muted);white-space:nowrap;text-align:center;}
+.scale-val-bubble{
+  display:none;position:absolute;top:-2rem;
+  background:var(--accent2);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;
+  padding:.2rem .55rem;border-radius:3px;
+  transform:translateX(-50%);pointer-events:none;
+  transition:left .1s;
+}
+.scale-val-bubble.active{display:block;}
 </style>
 </head>
 <body>
@@ -349,9 +387,38 @@ function renderQuestion(){
     </div>`;
   }
   if(q.type==='rating'){
-    const max=q.rating_max||5;
-    bodyHTML=`<div class="rrow">${Array.from({length:max},(_,i)=>i+1).map(n=>`
-      <button class="rbtn" onclick="pickRating(this,${n})">${n}</button>`).join('')}</div>`;
+    const sMin=q.scale_min??1; const sMax=q.scale_max??5;
+    const stmts=q.options||[''];
+    const optional=q.statements_optional;
+    const midLabels=q.scale_mid_labels||[];
+    const allLabels={};
+    if(q.scale_label_min) allLabels[sMin]=q.scale_label_min;
+    if(q.scale_label_max) allLabels[sMax]=q.scale_label_max;
+    midLabels.forEach(m=>{if(m.label)allLabels[m.value]=m.label;});
+    // build ticks for label display
+    const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
+    const midVal=Math.round((sMin+sMax)/2);
+
+    bodyHTML=`<div class="scale-stmts">${stmts.map((s,i)=>`
+      <div class="scale-stmt-row" id="sr-${i}">
+        <div class="scale-stmt-label">${s}${optional?'<span class="opt-tag">opcional</span>':''}</div>
+        <div class="scale-slider-wrap">
+          <input type="range" class="scale-slider" id="slider-${i}"
+            min="${sMin}" max="${sMax}" step="1" value="${midVal}"
+            oninput="updSlider(${i},this.value)"
+            data-stmt="${s.replace(/"/g,'&quot;')}" data-active="false">
+          <div class="scale-ticks">
+            ${ticks.map(v=>{
+              const lbl=allLabels[v];
+              return `<div class="scale-tick" style="left:${((v-sMin)/(sMax-sMin)*100).toFixed(1)}%">
+                <div class="tick-mark"></div>
+                ${lbl?`<div class="tick-lbl">${lbl}</div>`:(v===sMin||v===sMax||midLabels.find(m=>m.value===v))?`<div class="tick-lbl">${v}</div>`:`<div class="tick-lbl" style="opacity:.4">${v}</div>`}
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="scale-val-bubble" id="bub-${i}">${midVal}</div>
+        </div>
+      </div>`).join('')}</div>`;
   }
 
   wrap.innerHTML=`
@@ -392,13 +459,42 @@ window.pickMC=(el,val)=>{
   el.classList.add('sel');selAnswer=val;
   const btn=document.getElementById('btn-sub');if(btn)btn.disabled=false;
 };
-window.pickRating=(el,val)=>{
-  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel');selAnswer=String(val);
-  const btn=document.getElementById('btn-sub');if(btn)btn.disabled=false;
+window.updSlider=(i,val)=>{
+  const slider=document.getElementById('slider-'+i);
+  const bub=document.getElementById('bub-'+i);
+  if(slider){ slider.dataset.active='true'; slider.dataset.val=val; }
+  if(bub){ bub.textContent=val; bub.classList.add('active'); }
+  // Update combined answer from all sliders
+  buildScaleAnswer();
 };
+function buildScaleAnswer(){
+  const sliders=document.querySelectorAll('.scale-slider');
+  const ans={};let anyActive=false;
+  sliders.forEach(sl=>{
+    if(sl.dataset.active==='true'){ ans[sl.dataset.stmt]=parseInt(sl.dataset.val); anyActive=true; }
+    else if(!currentQ?.statements_optional){ ans[sl.dataset.stmt]=null; } // required but not touched
+  });
+  // All required sliders must be touched unless optional
+  const allTouched = currentQ?.statements_optional ||
+    Array.from(sliders).every(sl=>sl.dataset.active==='true');
+  selAnswer = allTouched && anyActive ? JSON.stringify(ans) : null;
+  const btn=document.getElementById('btn-sub');
+  if(btn) btn.disabled=!selAnswer;
+}
 
 // FIX: submitAnswer reads selAnswer OR the textarea/input value directly
+// Update slider visual gradient as value changes
+document.addEventListener('input', e=>{
+  if(!e.target.classList.contains('scale-slider')) return;
+  const sl=e.target;
+  const min=parseInt(sl.min);const max=parseInt(sl.max);const val=parseInt(sl.value);
+  const pct=((val-min)/(max-min)*100).toFixed(1);
+  sl.style.background=`linear-gradient(to right,var(--accent2) 0%,var(--accent2) ${pct}%,var(--border) ${pct}%,var(--border) 100%)`;
+  // Move bubble
+  const bub=document.getElementById('bub-'+sl.id.replace('slider-',''));
+  if(bub){ bub.style.left=pct+'%'; }
+});
+
 window.submitAnswer=async()=>{
   const ansInput=document.getElementById('ans-input');
   const answer=(selAnswer||ansInput?.value||'').trim();
@@ -494,18 +590,56 @@ function renderAudienceResults(rs){
   }
 
   if(q.type==='rating'){
-    const max=q.rating_max||5;const counts={};for(let i=1;i<=max;i++)counts[i]=0;
-    rs.forEach(r=>{const v=parseInt(r.answer);if(counts[v]!==undefined)counts[v]++;});
-    const maxC=Math.max(...Object.values(counts),1);
-    const avg=rs.length?(rs.reduce((s,r)=>s+parseInt(r.answer||0),0)/rs.length).toFixed(1):'—';
-    body.innerHTML=`<div style="font-size:.68rem;color:var(--muted);margin-bottom:.65rem;">Média: <strong style="color:var(--text);font-size:1rem;font-family:'Syne',sans-serif;">${avg}</strong></div>
-      <div class="menti-bars">${Object.entries(counts).map(([n,c],i)=>{
-        const pct=Math.round(c/rs.length*100)||0;const col=PAL_AUD[i%PAL_AUD.length];
-        return`<div class="menti-bar-row">
-          <div class="menti-bar-label"><span class="opt-text">${n} ★</span><span class="opt-count">${c} (${pct}%)</span></div>
-          <div class="menti-bar-track"><div class="menti-bar-fill" style="width:${pct}%;background:${col};">${pct>8?`<span class="pct">${pct}%</span>`:''}</div></div>
-        </div>`;
-      }).join('')}</div>`;
+    const sMin=q.scale_min??1; const sMax=q.scale_max??5;
+    const stmts=q.options||[''];
+    const midLabels=q.scale_mid_labels||[];
+    const allLabels={};
+    if(q.scale_label_min) allLabels[sMin]=q.scale_label_min;
+    if(q.scale_label_max) allLabels[sMax]=q.scale_label_max;
+    midLabels.forEach(m=>{if(m.label)allLabels[m.value]=m.label;});
+    const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
+    const range=sMax-sMin||1;
+    const parsed=rs.map(r=>{try{return JSON.parse(r.answer);}catch(e){return null;}}).filter(Boolean);
+
+    const sections=stmts.map((stmt,si)=>{
+      const col=PAL_AUD[si%PAL_AUD.length];
+      const counts=Object.fromEntries(ticks.map(v=>[v,0]));
+      parsed.forEach(p=>{const v=p[stmt];if(v!=null&&counts[v]!==undefined)counts[v]++;});
+      const total=Object.values(counts).reduce((a,b)=>a+b,0);
+      const avgVal=total?(Object.entries(counts).reduce((s,[v,c])=>s+(parseInt(v)*c),0)/total).toFixed(1):null;
+      const maxC=Math.max(...Object.values(counts),1);
+      return `<div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;"></span>
+          <span style="font-size:.82rem;color:var(--text);">${esc(stmt)}</span>
+          ${q.show_avg!==false&&avgVal?`<span style="margin-left:auto;font-family:'Syne',sans-serif;font-weight:800;color:${col};">${avgVal}</span>`:''}
+        </div>
+        <div style="position:relative;height:44px;margin-bottom:4px;">
+          ${ticks.map(v=>{
+            const c=counts[v]||0;
+            const pct=maxC?Math.round(c/maxC*100):0;
+            const left=((v-sMin)/range*100).toFixed(1);
+            const h=Math.max(pct*0.38,c>0?4:0);
+            return `<div style="position:absolute;bottom:0;left:${left}%;transform:translateX(-50%);width:24px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+              ${c>0?`<span style="font-size:.55rem;color:${col};">${c}</span>`:''}
+              <div style="width:20px;height:${h}px;background:${col};border-radius:2px 2px 0 0;opacity:.8;"></div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="position:relative;height:6px;background:var(--border);border-radius:3px;margin-bottom:18px;">
+          ${avgVal?`<div style="position:absolute;top:50%;left:${((parseFloat(avgVal)-sMin)/range*100).toFixed(1)}%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:${col};border:2px solid var(--surface);"></div>`:''}
+        </div>
+        <div style="position:relative;height:16px;">
+          ${ticks.map(v=>{
+            const lbl=allLabels[v];
+            if(!lbl&&v!==sMin&&v!==sMax)return '';
+            return `<span style="position:absolute;left:${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.58rem;color:${lbl&&lbl!==String(v)?'var(--accent)':'var(--muted)'};white-space:nowrap;">${lbl||v}</span>`;
+          }).join('')}
+        </div>
+        <div style="font-size:.58rem;color:var(--muted);margin-top:.2rem;">${total} resposta${total!==1?'s':''}</div>
+      </div>`;
+    }).join('');
+    body.innerHTML=sections||'<p style="color:var(--muted);font-size:.72rem;">Sem respostas ainda...</p>';
   }
 }
 

@@ -470,8 +470,70 @@ function renderQEditor(){
       </div>`;
   }
   if(q.type==='rating'){
-    extra=`<div class="frow"><label>Máximo da escala</label>
-      <input type="number" id="rating-max" min="2" max="10" value="${q.rating_max||5}" oninput="selQ.rating_max=parseInt(this.value)||5">
+    const stmts = q.options||[''];
+    const midLabels = q.scale_mid_labels||[];
+    extra=`
+    <div class="frow">
+      <label>Dimensões da escala</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
+        <div>
+          <div style="font-size:.58rem;color:var(--muted);margin-bottom:.25rem;">Mínimo</div>
+          <input type="number" id="sc-min" min="0" max="9" value="${q.scale_min??1}" oninput="selQ.scale_min=parseInt(this.value)">
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:var(--muted);margin-bottom:.25rem;">Máximo</div>
+          <input type="number" id="sc-max" min="2" max="10" value="${q.scale_max??5}" oninput="selQ.scale_max=parseInt(this.value)">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+        <div>
+          <div style="font-size:.58rem;color:var(--muted);margin-bottom:.25rem;">Rótulo mínimo</div>
+          <input type="text" id="sc-lbl-min" value="${esc(q.scale_label_min||'')}" placeholder="ex: Discordo" oninput="selQ.scale_label_min=this.value">
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:var(--muted);margin-bottom:.25rem;">Rótulo máximo</div>
+          <input type="text" id="sc-lbl-max" value="${esc(q.scale_label_max||'')}" placeholder="ex: Concordo" oninput="selQ.scale_label_max=this.value">
+        </div>
+      </div>
+    </div>
+    <div class="frow">
+      <label>Rótulos intermédios (opcional)</label>
+      <div id="mid-labels-wrap" style="display:flex;flex-direction:column;gap:.35rem;">
+        ${midLabels.map((m,i)=>`
+          <div class="opt-row" style="gap:.4rem;">
+            <input type="number" value="${m.value}" placeholder="Valor" style="width:80px;flex:none;"
+              oninput="updMidLabel(${i},'value',parseInt(this.value))">
+            <input type="text" value="${esc(m.label)}" placeholder="ex: Neutro"
+              oninput="updMidLabel(${i},'label',this.value)">
+            <button class="ico-btn" onclick="rmMidLabel(${i})">✕</button>
+          </div>`).join('')}
+      </div>
+      <button class="add-opt" onclick="addMidLabel()">+ Rótulo intermédio</button>
+    </div>
+    <div class="frow">
+      <label>Afirmações a avaliar</label>
+      <div class="opts-wrap" id="stmts-wrap">
+        ${stmts.map((s,i)=>`
+          <div class="opt-row">
+            <input type="text" value="${esc(s)}" placeholder="Afirmação ${i+1}"
+              oninput="updStmt(${i},this.value)"
+              style="border-left:3px solid ${PAL[i%PAL.length]}40;">
+            <button class="ico-btn" onclick="rmStmt(${i})">✕</button>
+          </div>`).join('')}
+      </div>
+      <button class="add-opt" onclick="addStmt()">+ Afirmação</button>
+    </div>
+    <div class="frow" style="display:flex;gap:1rem;align-items:center;">
+      <label style="margin:0;display:flex;align-items:center;gap:.5rem;cursor:pointer;">
+        <input type="checkbox" id="stmt-optional" ${q.statements_optional?'checked':''} onchange="selQ.statements_optional=this.checked"
+          style="width:auto;padding:0;border:none;">
+        Afirmações podem ser saltadas
+      </label>
+      <label style="margin:0;display:flex;align-items:center;gap:.5rem;cursor:pointer;">
+        <input type="checkbox" id="show-avg" ${q.show_avg!==false?'checked':''} onchange="selQ.show_avg=this.checked"
+          style="width:auto;padding:0;border:none;">
+        Mostrar média
+      </label>
     </div>`;
   }
 
@@ -569,7 +631,16 @@ window.saveQuestion = async ()=>{
   loading(true);
   const upd = {question, type:selQ.type};
   if(selQ.type==='multiple_choice'){upd.options=selQ.options||[];upd.correct_answers=selQ.correct_answers||[];}
-  if(selQ.type==='rating') upd.rating_max=selQ.rating_max||5;
+  if(selQ.type==='rating'){
+    upd.options=selQ.options||[];
+    upd.scale_min=selQ.scale_min??1;
+    upd.scale_max=selQ.scale_max??5;
+    upd.scale_label_min=selQ.scale_label_min||'';
+    upd.scale_label_max=selQ.scale_label_max||'';
+    upd.scale_mid_labels=selQ.scale_mid_labels||[];
+    upd.statements_optional=selQ.statements_optional||false;
+    upd.show_avg=selQ.show_avg!==false;
+  }
   await sb.from('questions').update(upd).eq('id',selQ.id);
   await loadQuestions();
   selQ = questions.find(q=>q.id===selQ.id)||null;
@@ -713,30 +784,76 @@ function renderOpenText(body, rs){
 }
 
 function renderRating(body, q, rs){
-  const max=q.rating_max||5;
-  const counts={};for(let i=1;i<=max;i++)counts[i]=0;
-  rs.forEach(r=>{const v=parseInt(r.answer);if(counts[v]!==undefined)counts[v]++;});
-  const maxC=Math.max(...Object.values(counts),1);
-  const avg=rs.length?(rs.reduce((s,r)=>s+parseInt(r.answer||0),0)/rs.length).toFixed(1):'—';
-  body.innerHTML=`
-    <div style="font-size:.68rem;color:var(--muted);margin-bottom:.85rem;">
-      MÉDIA: <span style="color:var(--text);font-size:1.1rem;font-family:'Syne',sans-serif;font-weight:800;">${avg}</span>
-    </div>
-    <div class="menti-bars">${Object.entries(counts).map(([n,c],i)=>{
-      const pct=Math.round(c/rs.length*100)||0;
-      const col=PAL[i%PAL.length];
-      return `<div class="menti-bar-row">
-        <div class="menti-bar-label">
-          <span class="opt-text">${n} ★</span>
-          <span class="opt-count">${c} (${pct}%)</span>
-        </div>
-        <div class="menti-bar-track">
-          <div class="menti-bar-fill" style="width:${pct}%;background:${col};">
-            ${pct>8?`<span class="pct">${pct}%</span>`:''}
-          </div>
-        </div>
-      </div>`;
-    }).join('')}</div>`;
+  const sMin = q.scale_min??1;
+  const sMax = q.scale_max??5;
+  const stmts = q.options||[''];
+  const midLabels = q.scale_mid_labels||[];
+  const showAvg = q.show_avg!==false;
+
+  // Parse answers: each response is JSON {stmt: value} or legacy number string
+  const parsed = rs.map(r=>{
+    try{ return JSON.parse(r.answer); }catch(e){ return null; }
+  }).filter(Boolean);
+
+  // Build scale tick labels
+  const range = sMax - sMin;
+  const ticks = [];
+  for(let v=sMin;v<=sMax;v++) ticks.push(v);
+  const allLabels = {};
+  allLabels[sMin] = q.scale_label_min||String(sMin);
+  allLabels[sMax] = q.scale_label_max||String(sMax);
+  midLabels.forEach(m=>{ if(m.label) allLabels[m.value]=m.label; });
+
+  // One section per statement
+  const sections = stmts.map((stmt,si)=>{
+    const col = PAL[si%PAL.length];
+    // counts per tick value
+    const counts = Object.fromEntries(ticks.map(v=>[v,0]));
+    parsed.forEach(p=>{ const v=p[stmt]; if(v!==null&&v!==undefined&&counts[v]!==undefined) counts[v]++; });
+    const total = Object.values(counts).reduce((a,b)=>a+b,0);
+    const avgVal = total ? (Object.entries(counts).reduce((s,[v,c])=>s+(parseInt(v)*c),0)/total).toFixed(1) : null;
+
+    // Distribution dots above the scale
+    const maxCount = Math.max(...Object.values(counts),1);
+
+    return `<div style="margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+        <span style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0;"></span>
+        <span style="font-size:.82rem;color:var(--text);">${esc(stmt)}</span>
+        ${showAvg&&avgVal?`<span style="margin-left:auto;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:${col};">${avgVal}</span>`:''}
+      </div>
+      <!-- Distribution bar above scale -->
+      <div style="position:relative;height:48px;margin-bottom:4px;">
+        ${ticks.map(v=>{
+          const c=counts[v]||0;
+          const pct=maxCount?Math.round(c/maxCount*100):0;
+          const left=((v-sMin)/Math.max(range,1)*100).toFixed(1);
+          const h=Math.max(pct*0.42,c>0?4:0);
+          return `<div style="position:absolute;bottom:0;left:${left}%;transform:translateX(-50%);width:28px;display:flex;flex-direction:column;align-items:center;gap:2px;">
+            ${c>0?`<span style="font-size:.58rem;color:var(--muted2);">${c}</span>`:''}
+            <div style="width:24px;height:${h}px;background:${col};border-radius:3px 3px 0 0;opacity:.85;"></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <!-- Scale track -->
+      <div style="position:relative;height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:20px;">
+        ${avgVal?`<div style="position:absolute;top:50%;left:${((parseFloat(avgVal)-sMin)/Math.max(range,1)*100).toFixed(1)}%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:${col};border:2px solid var(--surface);z-index:2;"></div>`:''}
+      </div>
+      <!-- Tick labels -->
+      <div style="position:relative;height:18px;">
+        ${ticks.map(v=>{
+          const left=((v-sMin)/Math.max(range,1)*100).toFixed(1);
+          const lbl=allLabels[v];
+          if(!lbl&&v!==sMin&&v!==sMax) return '';
+          return `<span style="position:absolute;left:${left}%;transform:translateX(-50%);font-size:.6rem;color:${lbl&&lbl!==String(v)?'var(--accent)':'var(--muted2)'};white-space:nowrap;">${lbl||v}</span>`;
+        }).join('')}
+      </div>
+      <div style="font-size:.6rem;color:var(--muted);margin-top:.25rem;">${total} resposta${total!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+
+  body.innerHTML=sections||'<p style="color:var(--muted);font-size:.72rem;">Sem respostas ainda...</p>';
+  typeset('#res-body');
 }
 
 // ── QUIZ CRUD ─────────────────────────────────────────────
@@ -771,10 +888,58 @@ window.openAddQ=()=>{if(!curQuiz){toast('Selecciona um questionário','err');ret
 window.selType=(el)=>{document.querySelectorAll('.type-opt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');newQType=el.dataset.t;};
 window.addQuestion=async()=>{
   loading(true);closeModal('modal-add-q');
-  const defs={multiple_choice:{options:['Opção A','Opção B'],correct_answers:[]},word_cloud:{},open_text:{},rating:{rating_max:5}};
+  const defs={
+    multiple_choice:{options:['Opção A','Opção B'],correct_answers:[]},
+    word_cloud:{},open_text:{},
+    rating:{options:['Afirmação 1'],scale_min:1,scale_max:5,
+      scale_label_min:'Discordo',scale_label_max:'Concordo',
+      scale_mid_labels:[],statements_optional:false,show_avg:true}
+  };
   const {data,error}=await sb.from('questions').insert({quiz_id:curQuiz.id,type:newQType,question:'Nova pergunta',q_order:questions.length,...defs[newQType]}).select().single();
   if(error){toast('Erro','err');loading(false);return;}
   await loadQuestions();selQ=questions.find(q=>q.id===data.id)||null;renderCenter();loading(false);toast('Pergunta adicionada');
+};
+
+// Scale statement helpers
+window.addStmt=()=>{
+  if(!selQ)return; selQ.options=selQ.options||[];selQ.options.push('');
+  const i=selQ.options.length-1;
+  const w=document.getElementById('stmts-wrap');
+  const d=document.createElement('div');d.className='opt-row';
+  d.innerHTML=`<input type="text" value="" placeholder="Afirmação ${i+1}" oninput="updStmt(${i},this.value)" style="border-left:3px solid ${PAL[i%PAL.length]}40;"><button class="ico-btn" onclick="rmStmt(${i})">&#x2715;</button>`;
+  w.appendChild(d);
+};
+window.updStmt=(i,v)=>{ if(selQ?.options) selQ.options[i]=v; };
+window.rmStmt=(i)=>{
+  if(!selQ?.options||selQ.options.length<=1){toast('Mínimo 1 afirmação','err');return;}
+  selQ.options.splice(i,1);
+  document.getElementById('stmts-wrap').innerHTML=selQ.options.map((s,idx)=>`
+    <div class="opt-row">
+      <input type="text" value="${esc(s)}" placeholder="Afirmação ${idx+1}" oninput="updStmt(${idx},this.value)"
+        style="border-left:3px solid ${PAL[idx%PAL.length]}40;">
+      <button class="ico-btn" onclick="rmStmt(${idx})">&#x2715;</button>
+    </div>`).join('');
+};
+window.addMidLabel=()=>{
+  if(!selQ)return; selQ.scale_mid_labels=selQ.scale_mid_labels||[];
+  const midVal=Math.round(((selQ.scale_min||1)+(selQ.scale_max||5))/2);
+  selQ.scale_mid_labels.push({value:midVal,label:''});
+  const i=selQ.scale_mid_labels.length-1;
+  const w=document.getElementById('mid-labels-wrap');
+  const d=document.createElement('div');d.className='opt-row';d.style.gap='.4rem';
+  d.innerHTML=`<input type="number" value="${midVal}" placeholder="Valor" style="width:80px;flex:none;" oninput="updMidLabel(${i},'value',parseInt(this.value))"><input type="text" value="" placeholder="ex: Neutro" oninput="updMidLabel(${i},'label',this.value)"><button class="ico-btn" onclick="rmMidLabel(${i})">&#x2715;</button>`;
+  w.appendChild(d);
+};
+window.updMidLabel=(i,k,v)=>{ if(selQ?.scale_mid_labels?.[i]) selQ.scale_mid_labels[i][k]=v; };
+window.rmMidLabel=(i)=>{
+  if(!selQ?.scale_mid_labels)return;
+  selQ.scale_mid_labels.splice(i,1);
+  document.getElementById('mid-labels-wrap').innerHTML=selQ.scale_mid_labels.map((m,idx)=>`
+    <div class="opt-row" style="gap:.4rem;">
+      <input type="number" value="${m.value}" placeholder="Valor" style="width:80px;flex:none;" oninput="updMidLabel(${idx},'value',parseInt(this.value))">
+      <input type="text" value="${esc(m.label)}" placeholder="ex: Neutro" oninput="updMidLabel(${idx},'label',this.value)">
+      <button class="ico-btn" onclick="rmMidLabel(${idx})">&#x2715;</button>
+    </div>`).join('');
 };
 
 // ── START / STOP ──────────────────────────────────────────
