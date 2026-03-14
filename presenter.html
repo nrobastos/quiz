@@ -176,9 +176,6 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 #loader.on{display:flex;}
 .spin{width:30px;height:30px;border:2px solid rgba(255,255,255,.12);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-[v-cloak] { display: none !important; }
-body { opacity: 0; transition: opacity 0.2s; }
-body.loaded { opacity: 1; }
 </style>
 </head>
 <body>
@@ -296,7 +293,6 @@ body.loaded { opacity: 1; }
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-// ⚠️  SUBSTITUI PELOS TEUS VALORES
 const SUPABASE_URL = 'https://afdesdgltdsfwkburmuc.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZGVzZGdsdGRzZndrYnVybXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzcwMTgsImV4cCI6MjA4OTAxMzAxOH0.bdyHF7EODlXW0GyKLdeKLzsmIGNGGc3qC13ogM5amEY';
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -309,13 +305,7 @@ user=session.user;
 const {data:p}=await sb.from('profiles').select('*').eq('id',user.id).single();
 if(!p){location.href='index.html';}
 
-// ... after your session check and profile check
-if(!session){ location.href='index.html'; return; }
-
 await loadQuizzes();
-// Once data is ready, show the body
-document.body.classList.add('loaded');
-
 
 // ── QUIZZES ───────────────────────────────────────────────
 async function loadQuizzes(){
