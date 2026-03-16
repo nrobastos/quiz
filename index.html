@@ -72,11 +72,13 @@ body{padding:1.25rem;}
     <a href="audience.html">audience.html → entrar com código</a>
   </div>
 </div>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-const SUPABASE_URL = 'https://afdesdgltdsfwkburmuc.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZGVzZGdsdGRzZndrYnVybXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzcwMTgsImV4cCI6MjA4OTAxMzAxOH0.bdyHF7EODlXW0GyKLdeKLzsmIGNGGc3qC13ogM5amEY';
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// supabase client
+(async () => {
+const SUPABASE_URL = 'https://XXXXXXXXXXXX.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.XXXXXXXX';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 sb.auth.getSession().then(({data:{session}})=>{ if(session) location.href='presenter.html'; });
 
@@ -119,6 +121,8 @@ document.addEventListener('keydown',e=>{
   if(document.getElementById('p-login').classList.contains('on'))window.login();
   else window.register();
 });
+
+})();
 </script>
 </body>
 </html>

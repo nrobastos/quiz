@@ -425,17 +425,20 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 <div id="toast"></div>
 <div id="loader"><div class="spin"></div></div>
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-const SUPABASE_URL = 'https://afdesdgltdsfwkburmuc.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZGVzZGdsdGRzZndrYnVybXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzcwMTgsImV4cCI6MjA4OTAxMzAxOH0.bdyHF7EODlXW0GyKLdeKLzsmIGNGGc3qC13ogM5amEY';
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// supabase client
+(async () => {
+const SUPABASE_URL = 'https://XXXXXXXXXXXX.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.XXXXXXXX';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Palette — one colour per option index, consistent
 const PAL = ['#3d9eff','#f0b429','#3dbd7a','#f05a5a','#b07aff','#ff9040','#40e0d0','#ff6eb4'];
 
 let user, quizzes=[], curQuiz=null, questions=[], selQ=null, newQType='multiple_choice', respSub=null, quizSub=null;
 
+// wrapped in async IIFE — see bottom
 const {data:{session}} = await sb.auth.getSession();
 if(!session){ location.href='index.html'; }
 user = session.user;
@@ -1210,6 +1213,8 @@ window.closeMobPanels=()=>{
   document.getElementById('mob-overlay')?.classList.remove('on');
 };
 function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='on'+(type==='err'?' err':'');clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('on'),2600);}
+
+})();
 </script>
 </body>
 </html>
