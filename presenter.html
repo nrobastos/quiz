@@ -21,7 +21,7 @@
   --c0:#3d9eff;--c1:#f0b429;--c2:#3dbd7a;--c3:#f05a5a;--c4:#b07aff;--c5:#ff9040;--c6:#40e0d0;--c7:#ff6eb4;
 }
 body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
-
+ 
 /* TOP */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;gap:1rem;}
 .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-.02em;}
@@ -31,7 +31,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 .live-pill .cv{font-size:1.1rem;font-weight:500;letter-spacing:.22em;color:var(--accent);}
 .live-pill .cl{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted2);}
-
+ 
 .btn{padding:.45rem .9rem;border-radius:3px;font-family:'Fira Code',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:1px solid transparent;transition:all .15s;}
 .btn-ghost{background:transparent;border-color:var(--border2);color:var(--muted2);}
 .btn-ghost:hover{border-color:var(--muted2);color:var(--text);}
@@ -49,10 +49,10 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .btn-results-off:hover{background:var(--red);color:#fff;}
 .btn-sm{padding:.35rem .7rem;font-size:.62rem;}
 .btn:disabled{opacity:.4;cursor:not-allowed;filter:none;}
-
+ 
 /* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;}
-
+ 
 /* LEFT */
 .pl{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;}
 .phd{padding:.85rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
@@ -67,7 +67,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .qitem.live::after{content:'AO VIVO';position:absolute;top:.45rem;right:.45rem;font-size:.48rem;letter-spacing:.1em;background:var(--green);color:#fff;padding:.1rem .35rem;border-radius:2px;}
 .qi-title{font-size:.78rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.25rem;}
 .qi-meta{font-size:.6rem;color:var(--muted);}
-
+ 
 /* CENTER */
 .pc{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .escroll{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.1rem;}
@@ -76,11 +76,11 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.75rem;color:var(--muted);}
 .empty-icon{font-size:2.5rem;opacity:.2;}
 .empty p{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;}
-
+ 
 .qhcard{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;}
 .qhcard input{flex:1;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;outline:none;}
 .qhcard input::placeholder{color:var(--muted);}
-
+ 
 .qsection{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
 .qsec-hd{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .qsec-hd h3{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
@@ -97,13 +97,13 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .qrow-acts{display:flex;gap:.35rem;opacity:0;transition:opacity .15s;}
 .qrow:hover .qrow-acts{opacity:1;}
 .active-tag{font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;background:var(--green);color:#fff;padding:.15rem .4rem;border-radius:2px;flex-shrink:0;}
-
+ 
 .tbadge{display:inline-block;padding:.12rem .45rem;border-radius:2px;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;}
 .t-multiple_choice{background:rgba(61,158,255,.15);color:#7ab8ff;}
 .t-word_cloud{background:rgba(61,189,122,.15);color:#7adda8;}
 .t-open_text{background:rgba(240,90,90,.15);color:#ff9090;}
 .t-rating{background:rgba(240,180,41,.15);color:#f5c85a;}
-
+ 
 /* EDITOR */
 .qedit{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1.5rem;}
 .qedit h2{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.65rem;}
@@ -114,7 +114,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .frow select option{background:var(--surface);}
 .latex-hint{font-size:.6rem;color:var(--muted);margin-top:.3rem;}
 .latex-hint code{color:var(--accent);font-size:.65rem;}
-
+ 
 /* Options editor with correct answer checkboxes */
 .opts-wrap{display:flex;flex-direction:column;gap:.4rem;}
 .opt-row{display:flex;gap:.4rem;align-items:center;}
@@ -136,9 +136,9 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .add-opt:hover{border-color:var(--muted2);color:var(--text);}
 .opts-legend{font-size:.6rem;color:var(--muted);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem;}
 .opts-legend .chk-ex{width:14px;height:14px;border:1px solid var(--green);border-radius:2px;background:rgba(61,189,122,.15);display:inline-flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--green);}
-
+ 
 .eact{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border);}
-
+ 
 /* ── RESULTS CARD — Mentimeter style ── */
 .rcard{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1.5rem;}
 .rcard-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;}
@@ -147,7 +147,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .results-status{display:flex;align-items:center;gap:.4rem;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.25rem .6rem;border-radius:2px;}
 .results-status.visible{background:rgba(61,189,122,.12);color:var(--green);border:1px solid rgba(61,189,122,.25);}
 .results-status.hidden{background:rgba(240,90,90,.1);color:var(--red);border:1px solid rgba(240,90,90,.2);}
-
+ 
 /* Horizontal bar chart — Mentimeter style */
 .menti-bars{display:flex;flex-direction:column;gap:.75rem;}
 .menti-bar-row{display:flex;flex-direction:column;gap:.3rem;}
@@ -158,17 +158,17 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .menti-bar-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding-left:.75rem;min-width:0;}
 .menti-bar-fill .pct{font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;color:rgba(255,255,255,.9);white-space:nowrap;}
 .correct-star{color:var(--green);font-size:.85rem;flex-shrink:0;}
-
+ 
 /* Word cloud */
 .wcloud{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;min-height:100px;padding:.75rem;}
 .wtag{padding:.28rem .65rem;border-radius:3px;font-family:'Syne',sans-serif;font-weight:700;animation:pop .3s cubic-bezier(.175,.885,.32,1.275) both;}
 @keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-
+ 
 /* Open text */
 .resp-list{display:flex;flex-direction:column;gap:.4rem;max-height:260px;overflow-y:auto;}
 .resp-item{padding:.5rem .85rem;background:var(--bg);border-left:2px solid var(--accent2);font-size:.8rem;animation:slide .25s ease both;}
 @keyframes slide{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-
+ 
 /* Rating */
 .rbars{display:flex;flex-direction:column;gap:.5rem;}
 .rbar-row{display:flex;align-items:center;gap:.65rem;}
@@ -176,7 +176,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .rbar-track-h{flex:1;height:26px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
 .rbar-fill-h{height:100%;background:linear-gradient(90deg,var(--accent2),#80c4ff);border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .rbar-n{font-size:.68rem;color:var(--muted2);width:1.8rem;text-align:right;}
-
+ 
 /* RIGHT */
 .pr{width:220px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);padding:1rem;display:flex;flex-direction:column;gap:1.1rem;overflow-y:auto;}
 .ctrl-hd{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:.65rem;}
@@ -187,7 +187,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .sbox{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:.65rem;text-align:center;}
 .sval{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;display:block;color:var(--text);}
 .slbl{font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:.1rem;}
-
+ 
 /* MODALS */
 .overlay{display:none;position:fixed;inset:0;background:rgba(12,12,15,.88);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
 .overlay.on{display:flex;}
@@ -210,7 +210,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .mfrow label{display:block;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem;}
 .mfrow input{width:100%;padding:.65rem .85rem;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:'Fira Code',monospace;font-size:.85rem;outline:none;}
 .mfrow input:focus{border-color:rgba(240,180,41,.4);}
-
+ 
 #toast{position:fixed;bottom:1.75rem;left:50%;transform:translateX(-50%) translateY(10px);background:var(--green);color:#fff;padding:.55rem 1.15rem;border-radius:3px;font-size:.7rem;letter-spacing:.08em;opacity:0;transition:all .25s;z-index:400;pointer-events:none;}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 #toast.err{background:var(--red);}
@@ -218,12 +218,12 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 #loader.on{display:flex;}
 .spin{width:30px;height:30px;border:2px solid rgba(255,255,255,.12);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
+ 
 /* ── RESPONSIVE ── */
 /* Mobile: hide sidebar, show toggle */
 .sidebar-toggle{display:none;background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:4px;padding:.3rem .55rem;font-size:.7rem;cursor:pointer;flex-shrink:0;}
 .sidebar-toggle:hover{border-color:var(--muted2);color:var(--text);}
-
+ 
 @media(max-width:900px){
   .pr{display:none;}
   .pr.mob-open{display:flex;position:fixed;top:0;right:0;bottom:0;width:220px;z-index:200;box-shadow:-4px 0 20px rgba(0,0,0,.4);}
@@ -247,7 +247,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
   .qrow-acts{opacity:1;}/* always show on touch */
   .topbar .logo{font-size:1.1rem;}
 }
-
+ 
 /* ── QUESTION PREVIEW ── */
 .preview-card{
   background:var(--surface2);
@@ -264,7 +264,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .preview-hd h3{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.45rem;}
 .preview-eye{font-size:.85rem;opacity:.7;}
 .preview-body{padding:1.25rem 1.5rem;}
-
+ 
 /* audience-style elements inside presenter preview */
 .prev-qtag{display:inline-block;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;padding:.18rem .5rem;border-radius:4px;margin-bottom:.75rem;}
 .prev-t-multiple_choice{background:rgba(61,158,255,.15);color:#7ab8ff;border:1px solid rgba(61,158,255,.2);}
@@ -272,7 +272,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .prev-t-open_text{background:rgba(240,90,90,.15);color:#ff9090;border:1px solid rgba(240,90,90,.2);}
 .prev-t-rating{background:rgba(240,180,41,.15);color:#f5c85a;border:1px solid rgba(240,180,41,.2);}
 .prev-qtext{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;line-height:1.35;color:var(--text);margin-bottom:1rem;}
-
+ 
 .prev-mc-list{display:flex;flex-direction:column;gap:.45rem;}
 .prev-mc-opt{
   display:flex;align-items:center;gap:.6rem;
@@ -284,14 +284,14 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 .prev-mc-bar{width:4px;height:100%;position:absolute;left:0;top:0;border-radius:4px 0 0 4px;}
 .prev-mc-letter{width:20px;height:20px;border-radius:3px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;color:var(--muted);}
 .prev-correct{color:var(--green);margin-left:auto;font-size:.75rem;flex-shrink:0;}
-
+ 
 .prev-scale-stmts{display:flex;flex-direction:column;gap:1.25rem;}
 .prev-scale-row{display:flex;flex-direction:column;gap:.5rem;}
 .prev-scale-label{font-size:.82rem;font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
 .prev-scale-track{height:5px;background:rgba(255,255,255,.1);border-radius:3px;position:relative;margin-bottom:18px;}
 .prev-scale-ticks{display:flex;justify-content:space-between;margin-top:4px;}
 .prev-scale-tick-lbl{font-size:.57rem;color:var(--muted2);}
-
+ 
 .prev-open-box{
   background:rgba(255,255,255,.04);border:1px solid var(--border);
   border-radius:4px;padding:.65rem .9rem;
@@ -308,7 +308,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
 </style>
 </head>
 <body>
-
+ 
 <div class="topbar">
   <div class="logo">Vo<span class="x">x</span>er</div>
   <div id="live-pill" style="display:none" class="live-pill">
@@ -321,7 +321,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     <button class="btn btn-ghost btn-sm" onclick="logout()">Sair</button>
   </div>
 </div>
-
+ 
 <div class="layout">
   <div class="pl">
     <div class="phd">
@@ -332,13 +332,13 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     </div>
     <div class="qlist" id="qlist"><div style="color:var(--muted);font-size:.68rem;text-align:center;margin-top:2rem;">Sem questionários</div></div>
   </div>
-
+ 
   <div class="pc">
     <div class="escroll" id="escroll">
       <div class="empty"><div class="empty-icon">◈</div><p>Selecciona ou cria um questionário</p></div>
     </div>
   </div>
-
+ 
   <div class="pr">
     <div>
       <div class="ctrl-hd">Questionário</div>
@@ -366,7 +366,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL: código -->
 <div class="overlay" id="modal-start">
   <div class="modal">
@@ -389,7 +389,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL: novo questionário -->
 <div class="overlay" id="modal-new-quiz">
   <div class="modal">
@@ -402,7 +402,7 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL: tipo de pergunta -->
 <div class="overlay" id="modal-add-q">
   <div class="modal">
@@ -420,34 +420,33 @@ body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);he
     </div>
   </div>
 </div>
-
+ 
 <div id="mob-overlay" class="mob-overlay" onclick="closeMobPanels()"></div>
 <div id="toast"></div>
 <div id="loader"><div class="spin"></div></div>
-
+ 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 // supabase client
 (async () => {
-const SUPABASE_URL = 'https://afdesdgltdsfwkburmuc.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZGVzZGdsdGRzZndrYnVybXVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzcwMTgsImV4cCI6MjA4OTAxMzAxOH0.bdyHF7EODlXW0GyKLdeKLzsmIGNGGc3qC13ogM5amEY';
-
+const SUPABASE_URL = 'https://XXXXXXXXXXXX.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.XXXXXXXX';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+ 
 // Palette — one colour per option index, consistent
 const PAL = ['#3d9eff','#f0b429','#3dbd7a','#f05a5a','#b07aff','#ff9040','#40e0d0','#ff6eb4'];
-
+ 
 let user, quizzes=[], curQuiz=null, questions=[], selQ=null, newQType='multiple_choice', respSub=null, quizSub=null;
-
+ 
 // wrapped in async IIFE — see bottom
 const {data:{session}} = await sb.auth.getSession();
 if(!session){ location.href='index.html'; }
 user = session.user;
 const {data:p} = await sb.from('profiles').select('*').eq('id',user.id).single();
 if(!p){ location.href='index.html'; }
-
+ 
 await loadQuizzes();
-
+ 
 // ── QUIZZES ───────────────────────────────────────────────
 async function loadQuizzes(){
   const {data} = await sb.from('quizzes').select('*').eq('presenter_id',user.id).order('created_at');
@@ -462,7 +461,7 @@ async function loadQuizzes(){
   }
   updateTopLive();
 }
-
+ 
 function renderQuizList(){
   const el=document.getElementById('qlist');
   if(!quizzes.length){el.innerHTML='<div style="color:var(--muted);font-size:.68rem;text-align:center;margin-top:2rem;">Sem questionários</div>';return;}
@@ -472,7 +471,7 @@ function renderQuizList(){
       <div class="qi-meta">${q.is_live?'● ao vivo':'○ inactivo'}</div>
     </div>`).join('');
 }
-
+ 
 window.selQuiz = async (id)=>{
   curQuiz = quizzes.find(q=>q.id===id)||null;
   selQ = null;
@@ -484,14 +483,14 @@ window.selQuiz = async (id)=>{
   renderCenter();
   subscribeQuiz();
 };
-
+ 
 async function loadQuestions(){
   if(!curQuiz) return;
   const {data} = await sb.from('questions').select('*').eq('quiz_id',curQuiz.id).order('q_order');
   questions = data||[];
   document.getElementById('stat-q').textContent = questions.length;
 }
-
+ 
 // ── CENTER ────────────────────────────────────────────────
 function renderCenter(){
   const area = document.getElementById('escroll');
@@ -534,8 +533,8 @@ function renderCenter(){
   if(curQuiz.active_question_id) subscribeResponses();
   typeset();
 }
-
-
+ 
+ 
 // ── QUESTION PREVIEW ─────────────────────────────────────
 // Shows a read-only preview of any selected question as the audience sees it.
 // Visible at all times once a question is selected, regardless of live state.
@@ -544,11 +543,11 @@ function renderPreview(){
   if(!area) return;
   const q = selQ;
   if(!q){ area.innerHTML=''; return; }
-
+ 
   const labels={multiple_choice:'Múltipla escolha',word_cloud:'Nuvem de palavras',open_text:'Pergunta aberta',rating:'Escala'};
   const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let bodyHTML='';
-
+ 
   if(q.type==='multiple_choice'){
     const correct=new Set(q.correct_answers||[]);
     const opts=q.options||[];
@@ -563,15 +562,15 @@ function renderPreview(){
         </div>`).join('')}</div>`;
     }
   }
-
+ 
   if(q.type==='word_cloud'){
     bodyHTML=`<div class="prev-word-box">A audiência escreve uma palavra...</div>`;
   }
-
+ 
   if(q.type==='open_text'){
     bodyHTML=`<div class="prev-open-box">A audiência escreve a sua resposta livremente...</div>`;
   }
-
+ 
   if(q.type==='rating'){
     const sMin=q.scale_min??1, sMax=q.scale_max??5, range=sMax-sMin||1;
     const stmts=q.options||[];
@@ -581,7 +580,7 @@ function renderPreview(){
     if(q.scale_label_max) allLabels[sMax]=q.scale_label_max;
     midLabels.forEach(m=>{if(m.label)allLabels[m.value]=m.label;});
     const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
-
+ 
     if(!stmts.length){bodyHTML='<div class="preview-empty">Sem afirmações definidas</div>';}
     else{
       bodyHTML=`<div class="prev-scale-stmts">${stmts.map((s,i)=>{
@@ -604,7 +603,7 @@ function renderPreview(){
       }).join('')}</div>`;
     }
   }
-
+ 
   area.innerHTML=`
     <div class="preview-card">
       <div class="preview-hd">
@@ -617,27 +616,27 @@ function renderPreview(){
         ${bodyHTML}
       </div>
     </div>`;
-
+ 
   // Typeset LaTeX in the preview
   if(window.MathJax?.typesetPromise){
     window.MathJax.typesetPromise([area]).catch(()=>{});
   }
 }
-
+ 
 // ── QUESTION EDITOR ───────────────────────────────────────
 window.selectQuestion = (id)=>{
   selQ = questions.find(q=>q.id===id)||null;
   renderCenter();
   if(curQuiz.active_question_id) subscribeResponses();
 };
-
+ 
 function renderQEditor(){
   const area = document.getElementById('qedit-area');
   if(!area||!selQ) return;
   const q = selQ;
   const typeOpts = ['multiple_choice','word_cloud','open_text','rating'].map(t=>
     `<option value="${t}"${q.type===t?' selected':''}>${typeLabel(t)}</option>`).join('');
-
+ 
   let extra = '';
   if(q.type==='multiple_choice'){
     const opts = q.options||['',''];
@@ -745,7 +744,7 @@ function renderQEditor(){
       </div>
     </div>`;
   }
-
+ 
   area.innerHTML=`<div class="qedit">
     <h2><span class="tbadge t-${q.type}">${typeLabel(q.type)}</span> Editar pergunta</h2>
     <div class="frow">
@@ -762,7 +761,7 @@ function renderQEditor(){
       <button class="btn btn-ghost" onclick="saveQuestion()">Guardar</button>
     </div>
   </div>`;
-
+ 
   // Live LaTeX preview as user types
   const qInput = document.getElementById('ed-q');
   if(qInput){
@@ -774,7 +773,7 @@ function renderQEditor(){
     if(prev && q.question){ prev.textContent = q.question; typeset('#latex-preview'); }
   }
 }
-
+ 
 window.toggleCorrect = (i)=>{
   if(!selQ) return;
   const opts = selQ.options||[];
@@ -790,7 +789,7 @@ window.toggleCorrect = (i)=>{
     btn.classList.toggle('on', selQ.correct_answers.includes(selQ.options[bi]));
   });
 };
-
+ 
 window.changeQType=(type)=>{ if(!selQ)return; selQ.type=type; if(type==='multiple_choice'&&!selQ.options)selQ.options=['Opção A','Opção B']; renderQEditor(); };
 window.addOpt=()=>{
   if(!selQ)return;
@@ -832,7 +831,7 @@ window.rmOpt=(i)=>{
       <button class="ico-btn" onclick="rmOpt(${idx})">✕</button>
     </div>`).join('');
 };
-
+ 
 window.saveQuestion = async ()=>{
   if(!selQ) return;
   const question = document.getElementById('ed-q')?.value.trim();
@@ -858,7 +857,7 @@ window.saveQuestion = async ()=>{
   renderPreview();
   toast('Guardado');loading(false);
 };
-
+ 
 window.deleteQuestion = async (id)=>{
   if(!confirm('Eliminar esta pergunta?')) return;
   loading(true);
@@ -870,7 +869,7 @@ window.deleteQuestion = async (id)=>{
   }
   await loadQuestions(); renderCenter(); loading(false); toast('Eliminada');
 };
-
+ 
 // ── ACTIVATE QUESTION ─────────────────────────────────────
 window.activateQ = async (id)=>{
   if(!curQuiz) return;
@@ -882,7 +881,7 @@ window.activateQ = async (id)=>{
 };
 window.prevQ = async ()=>{ if(!curQuiz||!questions.length)return; const idx=questions.findIndex(q=>q.id===curQuiz.active_question_id); const prev=idx<=0?questions[questions.length-1]:questions[idx-1]; await activateQ(prev.id); };
 window.nextQ = async ()=>{ if(!curQuiz||!questions.length)return; const idx=questions.findIndex(q=>q.id===curQuiz.active_question_id); const next=idx>=questions.length-1?questions[0]:questions[idx+1]; await activateQ(next.id); };
-
+ 
 // ── TOGGLE RESULTS ────────────────────────────────────────
 window.toggleResults = async ()=>{
   if(!curQuiz) return;
@@ -895,7 +894,7 @@ window.toggleResults = async ()=>{
   if(qNode) subscribeResponses();
   toast(newVal?'Resultados visíveis para a audiência':'Resultados ocultados');
 };
-
+ 
 function updateResultsBtn(){
   const btn=document.getElementById('btn-results');
   if(!btn) return;
@@ -903,7 +902,7 @@ function updateResultsBtn(){
   btn.textContent=on?'🙈 Ocultar resultados':'👁 Mostrar resultados';
   btn.className=`btn ctrl-btn ${on?'btn-results-off':'btn-results-on'}`;
 }
-
+ 
 // ── RESPONSES + MENTIMETER CHARTS ─────────────────────────
 function subscribeResponses(){
   if(respSub){sb.removeChannel(respSub);respSub=null;}
@@ -913,7 +912,7 @@ function subscribeResponses(){
     .on('postgres_changes',{event:'*',schema:'public',table:'responses',filter:`question_id=eq.${curQuiz.active_question_id}`},()=>loadResponses())
     .subscribe();
 }
-
+ 
 async function loadResponses(){
   if(!curQuiz?.active_question_id) return;
   const {data}=await sb.from('responses').select('answer').eq('question_id',curQuiz.active_question_id);
@@ -921,13 +920,13 @@ async function loadResponses(){
   document.getElementById('stat-r').textContent=rs.length;
   renderResults(rs);
 }
-
+ 
 function renderResults(rs){
   const area=document.getElementById('results-area');
   if(!area) return;
   const q=questions.find(x=>x.id===curQuiz?.active_question_id);
   if(!q){area.innerHTML='';return;}
-
+ 
   const showingStatus=curQuiz?.show_results;
   area.innerHTML=`<div class="rcard">
     <div class="rcard-hd">
@@ -939,23 +938,23 @@ function renderResults(rs){
     </div>
     <div id="res-body"></div>
   </div>`;
-
+ 
   const body=document.getElementById('res-body');
   if(!rs.length){body.innerHTML='<p style="color:var(--muted);font-size:.72rem;padding:.5rem 0;">Sem respostas ainda...</p>';return;}
-
+ 
   if(q.type==='multiple_choice') renderMentiBar(body, q, rs);
   else if(q.type==='word_cloud') renderWordCloud(body, rs);
   else if(q.type==='open_text') renderOpenText(body, rs);
   else if(q.type==='rating') renderRating(body, q, rs);
 }
-
+ 
 function renderMentiBar(body, q, rs){
   const opts=q.options||[];
   const correct=new Set(q.correct_answers||[]);
   const counts=Object.fromEntries(opts.map(o=>[o,0]));
   rs.forEach(r=>{if(counts[r.answer]!==undefined)counts[r.answer]++;});
   const total=rs.length||1;
-
+ 
   if(!rs.length){body.innerHTML='<p style="color:var(--muted);font-size:.72rem;padding:.5rem 0;">Sem respostas ainda...</p>';return;}
   body.innerHTML=`<div class="menti-bars">${opts.map((opt,i)=>{
     const count=counts[opt]||0;
@@ -979,7 +978,7 @@ function renderMentiBar(body, q, rs){
   }).join('')}</div>`;
   typeset('#res-body');
 }
-
+ 
 function renderWordCloud(body, rs){
   const freq={};
   rs.forEach(r=>{const w=(r.answer||'').toLowerCase().trim();if(w)freq[w]=(freq[w]||0)+1;});
@@ -990,11 +989,11 @@ function renderWordCloud(body, rs){
     return`<span class="wtag" style="font-size:${sz}rem;background:${c}18;color:${c};border:1px solid ${c}33;">${w}</span>`;
   }).join('')}</div>`;
 }
-
+ 
 function renderOpenText(body, rs){
   body.innerHTML=`<div class="resp-list">${rs.map(r=>`<div class="resp-item">${esc(r.answer)}</div>`).join('')}</div>`;
 }
-
+ 
 function renderRating(body, q, rs){
   const sMin=q.scale_min??1, sMax=q.scale_max??5, range=sMax-sMin||1;
   const stmts=q.options||[''];
@@ -1002,7 +1001,7 @@ function renderRating(body, q, rs){
   const showDistrib=q.show_distrib!==false;
   const ticks=[];for(let v=sMin;v<=sMax;v++)ticks.push(v);
   const parsed=rs.map(r=>{try{return JSON.parse(r.answer);}catch(e){return null;}}).filter(Boolean);
-
+ 
   const sections=stmts.map((stmt,si)=>{
     const col=PAL[si%PAL.length];
     const counts=Object.fromEntries(ticks.map(v=>[v,0]));
@@ -1010,7 +1009,7 @@ function renderRating(body, q, rs){
     const total=Object.values(counts).reduce((a,b)=>a+b,0);
     const avgVal=total?(Object.entries(counts).reduce((s,[v,cnt])=>s+(parseInt(v)*cnt),0)/total).toFixed(1):null;
     const maxC=Math.max(...Object.values(counts),1);
-
+ 
     const distribHTML=showDistrib?`
       <div style="position:relative;height:48px;margin-bottom:4px;">
         ${ticks.map(v=>{const cnt=counts[v]||0;const pct=maxC?Math.round(cnt/maxC*100):0;const left=((v-sMin)/range*100).toFixed(1);const h=Math.max(pct*0.42,cnt>0?4:0);return \`<div style="position:absolute;bottom:0;left:\${left}%;transform:translateX(-50%);width:28px;display:flex;flex-direction:column;align-items:center;gap:2px;">\${cnt>0?\`<span style="font-size:.58rem;color:var(--muted2);">\${cnt}</span>\`:''}<div style="width:24px;height:\${h}px;background:\${col};border-radius:3px 3px 0 0;opacity:.85;"></div></div>\`;}).join('')}
@@ -1020,7 +1019,7 @@ function renderRating(body, q, rs){
       </div>
       <div style="position:relative;height:18px;">${ticks.map(v=>\`<span style="position:absolute;left:\${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.6rem;color:var(--muted2);white-space:nowrap;">\${v}</span>\`).join('')}</div>
     `:'';
-
+ 
     const avgOnlyHTML=!showDistrib&&showAvg&&avgVal?\`
       <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem;padding:.6rem .85rem;background:rgba(255,255,255,.04);border-radius:4px;">
         <div style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;position:relative;">
@@ -1030,7 +1029,7 @@ function renderRating(body, q, rs){
       </div>
       <div style="position:relative;height:16px;margin-top:4px;">\${ticks.map(v=>\`<span style="position:absolute;left:\${((v-sMin)/range*100).toFixed(1)}%;transform:translateX(-50%);font-size:.58rem;color:var(--muted2);">\${v}</span>\`).join('')}</div>
     \`:'';
-
+ 
     return \`<div style="margin-bottom:1.5rem;">
       <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;">
         <span style="width:10px;height:10px;border-radius:50%;background:\${col};flex-shrink:0;"></span>
@@ -1041,7 +1040,7 @@ function renderRating(body, q, rs){
       \${distribHTML}\${avgOnlyHTML}
     </div>\`;
   }).join('');
-
+ 
   body.innerHTML=sections||'<p style="color:var(--muted);font-size:.72rem;">Sem respostas ainda...</p>';
   typeset('#res-body');
 }
@@ -1088,7 +1087,7 @@ window.addQuestion=async()=>{
   if(error){toast('Erro','err');loading(false);return;}
   await loadQuestions();selQ=questions.find(q=>q.id===data.id)||null;renderCenter();loading(false);toast('Pergunta adicionada');
 };
-
+ 
 // Scale statement helpers
 window.addStmt=()=>{
   if(!selQ)return; selQ.options=selQ.options||[];selQ.options.push('');
@@ -1130,7 +1129,7 @@ window.rmMidLabel=(i)=>{
       <button class="ico-btn" onclick="rmMidLabel(${idx})">&#x2715;</button>
     </div>`).join('');
 };
-
+ 
 // ── START / STOP ──────────────────────────────────────────
 window.startQuiz=async()=>{
   if(!curQuiz){toast('Selecciona um questionário','err');return;}
@@ -1151,19 +1150,19 @@ window.startQuiz=async()=>{
   openModal('modal-start');updateTopLive();updateLiveBtns();updateResultsBtn();
   loading(false);
 };
-
+ 
 window.stopQuiz=async()=>{
   if(!curQuiz)return;loading(true);
   await sb.from('quizzes').update({is_live:false,live_code:null,active_question_id:null,show_results:false}).eq('id',curQuiz.id);
   curQuiz={...curQuiz,is_live:false,live_code:null,active_question_id:null,show_results:false};
   renderQuizList();renderCenter();updateTopLive();updateLiveBtns();updateResultsBtn();loading(false);toast('Parado');
 };
-
+ 
 window.resetQ=async()=>{
   if(!curQuiz?.active_question_id||!confirm('Limpar respostas?'))return;
   loading(true);await sb.from('responses').delete().eq('question_id',curQuiz.active_question_id);loading(false);toast('Respostas eliminadas');
 };
-
+ 
 // ── REALTIME — only update fields that changed, never touch live_code ──
 function subscribeQuiz(){
   if(quizSub){sb.removeChannel(quizSub);quizSub=null;}
@@ -1178,14 +1177,14 @@ function subscribeQuiz(){
       })
     .subscribe();
 }
-
+ 
 // ── LaTeX ─────────────────────────────────────────────────
 function typeset(selector){
   if(!window.MathJax?.typesetPromise) return;
   const els = selector ? [document.querySelector(selector)].filter(Boolean) : undefined;
   window.MathJax.typesetPromise(els).catch(()=>{});
 }
-
+ 
 // ── UTILS ─────────────────────────────────────────────────
 function updateTopLive(){
   const pill=document.getElementById('live-pill');
@@ -1214,8 +1213,9 @@ window.closeMobPanels=()=>{
   document.getElementById('mob-overlay')?.classList.remove('on');
 };
 function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='on'+(type==='err'?' err':'');clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('on'),2600);}
-
+ 
 })();
 </script>
 </body>
 </html>
+ 
